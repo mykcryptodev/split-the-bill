@@ -39,7 +39,6 @@ const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0 }) => {
     <Transaction
       address={SPLIT_IT_CONTRACT_ADDRESS}
       chainId={CHAIN.id}
-      // @ts-ignore
       contracts={contracts}
     >
       <TransactionButton />

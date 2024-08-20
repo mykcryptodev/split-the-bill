@@ -34,7 +34,7 @@ contract SplitIt {
     mapping(uint256 => Payment[]) public payments;
 
     // mapping of splits created by address
-    mapping(address => uint256[]) public splitsByAddress;
+    mapping(address => uint256[]) public splitIdsByAddress;
 
     // mapping of payments made by address
     mapping(address => uint256[]) public paymentsByAddress;
@@ -68,6 +68,8 @@ contract SplitIt {
 
         Split memory split = Split(_creator, _totalAmount, _amountPerPerson, 0);
         splits[splitCounter] = split;
+
+        splitIdsByAddress[_creator].push(splitCounter);
 
         emit SplitCreated(splitCounter, _totalAmount, _amountPerPerson);
 
@@ -107,11 +109,11 @@ contract SplitIt {
     }
 
     /**
-     * @dev Function to get the splits created by an address
+     * @dev Function to get the split ids created by an address
      * @param _address The address of the user
     */
-    function getSplitsByAddress(address _address) public view returns (uint256[] memory) {
-        return splitsByAddress[_address];
+    function getSplitIdsByAddress(address _address) public view returns (uint256[] memory) {
+        return splitIdsByAddress[_address];
     }
 
     /**

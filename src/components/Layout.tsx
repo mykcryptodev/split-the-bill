@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, type ReactNode } from "react";
+import { type FC, useEffect, useState, type ReactNode } from "react";
 import { Wallet } from "~/components/Wallet";
 
 type Props = {
@@ -15,7 +15,7 @@ export const Layout: FC<Props> = ({ children }) => {
     return null;
   }
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 max-w-2xl mx-auto">
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto my-4">
         <h1 className="text-2xl font-bold">Split The Bill</h1>
         <Wallet />

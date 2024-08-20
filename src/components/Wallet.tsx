@@ -2,7 +2,8 @@ import {
   ConnectWallet, 
   Wallet as WalletComponent, 
   WalletDropdown, 
-  WalletDropdownLink, 
+  WalletDropdownLink,
+  WalletDropdownFundLink,
   WalletDropdownDisconnect, 
 } from '@coinbase/onchainkit/wallet'; 
 import {
@@ -18,7 +19,7 @@ export function Wallet() {
   return (
     <div className="flex justify-end">
       <WalletComponent>
-        <ConnectWallet>
+        <ConnectWallet withWalletAggregator>
           <Avatar className="h-6 w-6" />
           <Name />
         </ConnectWallet>
@@ -29,9 +30,16 @@ export function Wallet() {
             <Address className={color.foregroundMuted} />
             <EthBalance />
           </Identity>
+          <WalletDropdownLink
+            href="/my"
+            rel="noopener noreferrer"
+          >
+            My Splits
+          </WalletDropdownLink> 
           <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com">
             Wallet
           </WalletDropdownLink>
+          <WalletDropdownFundLink />
           <WalletDropdownDisconnect />
         </WalletDropdown>
       </WalletComponent>

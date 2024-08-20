@@ -13,9 +13,6 @@ export const Create: NextPage = () => {
 
   return (
     <div className="flex flex-col gap-2 justify-center max-w-md mx-auto">
-      <div className="flex items-center justify-between w-full max-w-7xl mx-auto my-4">
-        <h1 className="text-2xl font-bold">Split The Bill</h1>
-      </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-bold">Create a Split</h2>
         <label className="form-control w-full">
