@@ -1,7 +1,7 @@
 import { OnchainKitProvider } from '@coinbase/onchainkit';
 import {
-  RainbowKitProvider,
   connectorsForWallets,
+  RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import {
   coinbaseWallet,
@@ -9,17 +9,18 @@ import {
   rainbowWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createPublicClient, http as viemHttp } from "viem";
-import { WagmiProvider, createConfig, http } from 'wagmi';
- 
-import '@coinbase/onchainkit/styles.css';
-import '@rainbow-me/rainbowkit/styles.css';
 import { useEffect, useState } from 'react';
 import { createThirdwebClient } from 'thirdweb';
 import { ThirdwebProvider } from 'thirdweb/react';
+import { createPublicClient, http as viemHttp } from "viem";
 import { type PublicClient } from "viem";
+import { createConfig, http,WagmiProvider } from 'wagmi';
+
 import { APP_NAME, CHAIN, CHAIN_RPC } from '~/constants';
 import { env } from '~/env';
+
+import '@coinbase/onchainkit/styles.css';
+import '@rainbow-me/rainbowkit/styles.css';
 
 const queryClient = new QueryClient();
  

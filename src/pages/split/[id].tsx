@@ -1,15 +1,16 @@
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
-import { GetServerSideProps, type NextPage } from "next";
+import { type GetServerSideProps, type NextPage } from "next";
 import { useState } from "react";
 import { formatUnits } from "viem";
 import { useAccount, useReadContract } from 'wagmi';
+
 import Pay from "~/components/Pay";
 import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
 import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
-import { Payment, type Split as SplitT } from "~/types/split";
+import { type Payment, type Split as SplitT } from "~/types/split";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.params?.id as string;

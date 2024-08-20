@@ -1,6 +1,7 @@
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
-import { FC } from "react";
-import { Payment } from "~/types/split";
+import { type FC } from "react";
+
+import { type Payment } from "~/types/split";
 
 type Props = {
   payments: Payment[] | undefined;

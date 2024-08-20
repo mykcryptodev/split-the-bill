@@ -8,6 +8,7 @@ import {
 } from '@coinbase/onchainkit/transaction';
 import { type FC } from "react";
 import { useAccount } from 'wagmi';
+
 import { Wallet } from '~/components/Wallet';
 import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_ADDRESS } from '~/constants';
 import { erc20Abi } from "~/constants/abi/erc20";

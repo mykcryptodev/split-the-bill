@@ -1,4 +1,5 @@
 import { type FC, type ReactNode } from "react";
+
 import { Wallet } from "~/components/Wallet";
 
 type Props = {

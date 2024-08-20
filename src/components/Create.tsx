@@ -6,9 +6,10 @@ import {
   TransactionStatusAction,
   TransactionStatusLabel
 } from '@coinbase/onchainkit/transaction';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { parseUnits, type TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
+
 import { Wallet } from '~/components/Wallet';
 import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from '~/constants';
 import { splitItAbi } from '~/constants/abi/splitIt';
@@ -40,7 +41,7 @@ const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitC
       address={SPLIT_IT_CONTRACT_ADDRESS}
       chainId={CHAIN.id}
       contracts={contracts}
-      onSuccess={(receipt) => onSplitCreated(receipt.transactionReceipts[0] as TransactionReceipt)}
+      onSuccess={(receipt) => onSplitCreated(receipt.transactionReceipts[0]!)}
     >
       <TransactionButton text="Split The Bill" />
       <TransactionSponsor />

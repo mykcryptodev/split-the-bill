@@ -1,7 +1,8 @@
-import { NextPage } from "next";
+import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { isAddressEqual, type TransactionReceipt } from "viem";
+
 import CreateSplit from "~/components/Create";
 import CreateSplitEoaTw from "~/components/CreateEoaTw";
 import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
@@ -27,7 +28,7 @@ export const Create: NextPage = () => {
     if (logFromSplit) {
       const splitId = logFromSplit.topics[1];
       console.log({ splitId });
-      router.push(`/split/${Number(splitId)}`);
+      void router.push(`/split/${Number(splitId)}`);
     }
   };
 
@@ -69,7 +70,7 @@ export const Create: NextPage = () => {
             amountPerPerson={amountPerPerson}
             onSplitCreated={(receipt) => {
               console.log({ receipt });
-              pushToSplitPage(receipt as unknown as TransactionReceipt[]);
+              void pushToSplitPage(receipt as unknown as TransactionReceipt[]);
             }}
           />
         ) : (
@@ -78,7 +79,7 @@ export const Create: NextPage = () => {
             amountPerPerson={amountPerPerson}
             onSplitCreated={(receipt) => {
               console.log({ receipt });
-              pushToSplitPage([receipt]);
+              void pushToSplitPage([receipt]);
             }}
           />
         )}

@@ -1,7 +1,8 @@
-import { useMemo, type FC } from "react";
+import { type FC,useMemo } from "react";
 import { getContract, prepareContractCall } from 'thirdweb';
 import { TransactionButton } from 'thirdweb/react';
 import { useAccount, useReadContract } from 'wagmi';
+
 import { Wallet } from '~/components/Wallet';
 import { SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
 import { erc20Abi } from "~/constants/abi/erc20";

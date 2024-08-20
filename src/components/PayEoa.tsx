@@ -6,8 +6,9 @@ import {
   TransactionStatusAction,
   TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
-import { useMemo, type FC } from "react";
+import { type FC,useMemo } from "react";
 import { useAccount, useReadContract } from 'wagmi';
+
 import { Wallet } from '~/components/Wallet';
 import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
 import { erc20Abi } from "~/constants/abi/erc20";

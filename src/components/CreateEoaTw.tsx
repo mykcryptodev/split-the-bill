@@ -1,9 +1,10 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { getContract, prepareContractCall, ZERO_ADDRESS } from 'thirdweb';
 import { TransactionButton } from 'thirdweb/react';
-import { TransactionReceipt } from 'thirdweb/transaction';
+import { type TransactionReceipt } from 'thirdweb/transaction';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+
 import { Wallet } from '~/components/Wallet';
 import { SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, USDC_DECIMALS } from '~/constants';
 import { thirdwebClient } from '~/providers/OnchainProviders';

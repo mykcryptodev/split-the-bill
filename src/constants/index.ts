@@ -1,5 +1,6 @@
 import { base as twBase, baseSepolia as twBaseSepolia } from "thirdweb/chains";
 import { baseSepolia } from "wagmi/chains";
+
 import { env } from "~/env";
 
 export const APP_NAME = "Split It";

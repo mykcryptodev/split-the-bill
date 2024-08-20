@@ -20,6 +20,7 @@ import { viemAdapter } from "thirdweb/adapters/viem";
 import { useSetActiveWallet } from 'thirdweb/react';
 import { createWalletAdapter } from 'thirdweb/wallets';
 import { useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
+
 import { thirdwebClient } from '~/providers/OnchainProviders';
  
 export function Wallet() {
@@ -33,6 +34,7 @@ export function Wallet() {
       if (walletClient) {
         // adapt the walletClient to a thirdweb account
         const adaptedAccount = viemAdapter.walletClient.fromViem({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           walletClient: walletClient as any, // accounts for wagmi/viem version mismatches
         });
         // create the thirdweb wallet with the adapted account

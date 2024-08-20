@@ -2,6 +2,7 @@ import { isWalletACoinbaseSmartWallet } from "@coinbase/onchainkit/wallet";
 import type { UserOperation } from 'permissionless';
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+
 import { publicClient } from "~/providers/OnchainProviders";
 
 export const useIsSmartWallet = () => {
