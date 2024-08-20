@@ -9,3 +9,5 @@ export const USDC_ADDRESS: `0x${string}` = "0x036CbD53842c5426634e7929541eC2318f
 export const USDC_DECIMALS = 6; // 18
 
 export const MULTICALL: `0x${string}` = "0xcA11bde05977b3631167028862bE2a173976CA11"; // same address for mainnet and testnet base
+
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";

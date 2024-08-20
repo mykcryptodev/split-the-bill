@@ -5,7 +5,9 @@ const config = {
     "project": true
   },
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "react-hooks",
+    "simple-import-sort"
   ],
   "extends": [
     "next/core-web-vitals",
@@ -35,6 +37,25 @@ const config = {
         "checksVoidReturn": {
           "attributes": false
         }
+      }
+    ],
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "simple-import-sort/imports": [
+      "warn",
+      {
+        "groups": [
+          // Keep CSS imports as they are
+          ["^\\u0000"],
+          // Packages
+          ["^@?\\w"],
+          // Absolute imports and other imports such as styles
+          ["^"],
+          // Relative imports
+          ["^\\."],
+          // Style imports
+          ["^.+\\.s?css$"]
+        ]
       }
     ]
   }

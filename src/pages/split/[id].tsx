@@ -1,13 +1,18 @@
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
 import { formatAmount } from "@coinbase/onchainkit/token";
+import { isWalletACoinbaseSmartWallet } from "@coinbase/onchainkit/wallet";
 import { type NextPage, GetServerSideProps } from "next";
-import { useReadContract } from 'wagmi';
+import type { UserOperation } from 'permissionless';
+import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
+import { useAccount, useReadContract } from 'wagmi';
+import Pay from "~/components/Pay";
+import PayEoa from "~/components/PayEoa";
+import Payments from "~/components/Payments";
 import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
-import Pay from "~/components/Pay";
+import { publicClient } from "~/providers/OnchainProviders";
 import { type Split as SplitT } from "~/types/split";
-import Payments from "~/components/Payments";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.params?.id as string;
@@ -34,7 +39,28 @@ export const Split: NextPage<Props> = ({ id }) => {
     totalAmount: BigInt(data?.[1] ?? 0),
     amountPerPerson: BigInt(data?.[2] ?? 0),
     totalPaid: BigInt(data?.[3] ?? 0),
-  }
+  };
+
+  const { address } = useAccount();
+
+  const userOp = { sender: address } as UserOperation<'v0.6'>;
+
+  const [isSmartWallet, setIsSmartWallet] = useState<boolean>(false);
+
+  useEffect(() => {
+    const detectIfWalletIsSmartWallet = async () => {
+      const smartWalletCheck = await isWalletACoinbaseSmartWallet({ client: publicClient, userOp });
+      console.log('isSmartWallet', smartWalletCheck);
+      setIsSmartWallet(smartWalletCheck.isCoinbaseSmartWallet);
+    };
+    void detectIfWalletIsSmartWallet();
+  }, [address]);
+
+  const formattedAmount = Number(formatUnits(split.amountPerPerson, USDC_DECIMALS)).toLocaleString([], {
+    style: 'currency',
+    currency: 'USD',
+  });
+  
   return (
     <div className="flex flex-col gap-2">
       <h1>Split Page: {id}</h1>
@@ -51,7 +77,11 @@ export const Split: NextPage<Props> = ({ id }) => {
           formatUnits(split.amountPerPerson, USDC_DECIMALS)
         )}
       </div>
-      <Pay split={split} id={id} />
+      {isSmartWallet ? (
+        <Pay split={split} id={id} formattedAmount={formattedAmount} />
+      ) : (
+        <PayEoa split={split} id={id}  formattedAmount={formattedAmount} />
+      )}
       <div className="divider" />
       <Payments split={split} id={id} />
     </div>
