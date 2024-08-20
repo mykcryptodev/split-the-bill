@@ -1,3 +1,7 @@
 {
-  "ignoreCommand": "rm -rf ./solidity"
+  "build": { 
+    "commands": {
+      "build": "rm -rf ./solidity && next build"
+    }
+  }
 }
