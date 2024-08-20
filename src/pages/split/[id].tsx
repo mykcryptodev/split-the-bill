@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
 import { useAccount, useReadContract } from 'wagmi';
 import Pay from "~/components/Pay";
-import PayEoa from "~/components/PayEoa";
+import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
 import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
@@ -35,7 +35,7 @@ export const Split: NextPage<Props> = ({ id }) => {
     args: [BigInt(id)],
   });
   const split: SplitT = {
-    creator: data?.[0] ?? SPLIT_IT_CONTRACT_ADDRESS,
+    creator: data?.[0] as `0x${string}` ?? SPLIT_IT_CONTRACT_ADDRESS,
     totalAmount: BigInt(data?.[1] ?? 0),
     amountPerPerson: BigInt(data?.[2] ?? 0),
     totalPaid: BigInt(data?.[3] ?? 0),

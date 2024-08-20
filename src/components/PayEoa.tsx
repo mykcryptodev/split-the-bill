@@ -1,4 +1,3 @@
-import { Avatar, Name } from '@coinbase/onchainkit/identity';
 import {
   Transaction,
   TransactionButton,
@@ -7,9 +6,9 @@ import {
   TransactionStatusAction,
   TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
-import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet';
 import { useMemo, type FC } from "react";
 import { useAccount, useReadContract } from 'wagmi';
+import { Wallet } from '~/components/Wallet';
 import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
 import { erc20Abi } from "~/constants/abi/erc20";
 import { splitItAbi } from '~/constants/abi/splitIt';
@@ -89,12 +88,7 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount }) => {
       </TransactionStatus>
     </Transaction>  
   ) : (
-    <Wallet>
-      <ConnectWallet>
-        <Avatar className='h-6 w-6' />
-        <Name />
-      </ConnectWallet>
-    </Wallet>
+    <Wallet />
   );
 }
 

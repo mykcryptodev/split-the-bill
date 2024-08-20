@@ -1,22 +1,25 @@
 import { OnchainKitProvider } from '@coinbase/onchainkit';
-import { 
-  RainbowKitProvider, 
+import {
+  RainbowKitProvider,
   connectorsForWallets,
-} from '@rainbow-me/rainbowkit'; 
-import { 
-  metaMaskWallet, 
-  rainbowWallet, 
-  coinbaseWallet, 
-} from '@rainbow-me/rainbowkit/wallets'; 
+} from '@rainbow-me/rainbowkit';
+import {
+  coinbaseWallet,
+  metaMaskWallet,
+  rainbowWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider, createConfig, http } from 'wagmi';
 import { createPublicClient, http as viemHttp } from "viem";
+import { WagmiProvider, createConfig, http } from 'wagmi';
  
 import '@coinbase/onchainkit/styles.css';
-import '@rainbow-me/rainbowkit/styles.css'; 
+import '@rainbow-me/rainbowkit/styles.css';
+import { useEffect, useState } from 'react';
+import { createThirdwebClient } from 'thirdweb';
+import { ThirdwebProvider } from 'thirdweb/react';
+import { type PublicClient } from "viem";
 import { APP_NAME, CHAIN } from '~/constants';
 import { env } from '~/env';
-import { type PublicClient } from "viem";
 
 const queryClient = new QueryClient();
  
@@ -50,11 +53,23 @@ export const publicClient = createPublicClient({
   transport: viemHttp(),
 }) as PublicClient;
 
+export const thirdwebClient = createThirdwebClient({
+  clientId: env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+});
+
 type Props = {
   children: React.ReactNode;
 }
 
 function OnchainProviders({ children }: Props) {
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
@@ -63,7 +78,9 @@ function OnchainProviders({ children }: Props) {
           chain={CHAIN}
         >
           <RainbowKitProvider modalSize="compact">
-            {children}
+            <ThirdwebProvider>
+              {children}
+            </ThirdwebProvider>
           </RainbowKitProvider>
         </OnchainKitProvider>
       </QueryClientProvider>

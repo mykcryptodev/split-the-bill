@@ -1,7 +1,9 @@
+import { base as twBase, baseSepolia as twBaseSepolia } from "thirdweb/chains";
 import { baseSepolia } from "wagmi/chains";
 
 export const APP_NAME = "Split It";
 export const CHAIN = baseSepolia;
+export const THIRDWEB_CHAIN = CHAIN === baseSepolia ? twBaseSepolia : twBase;
 
 export const SPLIT_IT_CONTRACT_ADDRESS: `0x${string}` = "0x54EE636146Bf634b56ffbb09ca689a8eAFC841bc"; // "0xBa427F34718A538f454Cf7Db73867b4d98AFB7A9"
 
