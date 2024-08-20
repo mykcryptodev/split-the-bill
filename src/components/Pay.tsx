@@ -18,9 +18,12 @@ type Props = {
   id: string;
   split: Split;
   formattedAmount: string;
+  name: string;
+  comment: string;
+  onPaymentSuccessful: () => void;
 }
 
-export const Pay: FC<Props> = ({ split, id, formattedAmount }) => {
+export const Pay: FC<Props> = ({ split, id, formattedAmount, name, comment, onPaymentSuccessful }) => {
   const { address } = useAccount();
 
   return address ? (
@@ -42,11 +45,12 @@ export const Pay: FC<Props> = ({ split, id, formattedAmount }) => {
             BigInt(id),
             address,
             address,
-            "test name",
-            "test comment"
+            name,
+            comment,
           ],
         },
       ]}
+      onSuccess={() => void onPaymentSuccessful()}
     >
       <TransactionButton text={`Pay ${formattedAmount}`} />
       <TransactionSponsor />

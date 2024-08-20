@@ -43,7 +43,7 @@ contract SplitIt {
     uint256 public splitCounter;
 
     // event to emit when a new split is created
-    event SplitCreated(uint256 indexed splitId, uint256 totalAmount, uint256 amountPerPerson);
+    event SplitCreated(uint256 indexed splitId, address indexed creator, uint256 totalAmount, uint256 amountPerPerson);
 
     // event to emit when a participant pays their share of the bill
     event Paid(uint256 indexed splitId, address indexed participant, uint256 amount);
@@ -71,7 +71,7 @@ contract SplitIt {
 
         splitIdsByAddress[_creator].push(splitCounter);
 
-        emit SplitCreated(splitCounter, _totalAmount, _amountPerPerson);
+        emit SplitCreated(splitCounter, _creator, _totalAmount, _amountPerPerson);
 
         splitCounter++;
     }

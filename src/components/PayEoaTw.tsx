@@ -12,12 +12,15 @@ type Props = {
   id: string;
   split: Split;
   formattedAmount: string;
+  name: string;
+  comment: string;
+  onPaymentSuccessful: () => void;
 }
 
-export const PayEoa: FC<Props> = ({ split, id, formattedAmount }) => {
+export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, onPaymentSuccessful }) => {
   const { address } = useAccount();
 
-  const { data: allowance } = useReadContract({
+  const { data: allowance, refetch } = useReadContract({
     abi: erc20Abi,
     address: USDC_ADDRESS,
     functionName: "allowance",
@@ -43,7 +46,8 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount }) => {
       <TransactionButton
         transaction={() => transaction}
         unstyled
-        className="btn btn-primary"
+        className="btn btn-primary btn-block"
+        onTransactionConfirmed={() => void refetch()}
       >
         {`Approve ${formattedAmount} USDC`}
       </TransactionButton>
@@ -56,15 +60,22 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount }) => {
       chain: THIRDWEB_CHAIN,
       address: SPLIT_IT_CONTRACT_ADDRESS,
     }),
-    method: "function pay(string memory id) public",
-    params: [id],
+    method: "function pay(uint256 _splitId, address _address, address _fundedFrom, string memory _name, string memory _comment)",
+    params: [
+      BigInt(id),
+      address ?? ZERO_ADDRESS,
+      address ?? ZERO_ADDRESS,
+      name,
+      comment,
+    ],
   });
 
   return address ? (
     <TransactionButton
       transaction={() => transaction}
       unstyled
-      className="btn btn-primary"
+      className="btn btn-primary btn-block"
+      onTransactionConfirmed={() => void onPaymentSuccessful()}
     >
       {`Pay ${formattedAmount} USDC`}
     </TransactionButton> 

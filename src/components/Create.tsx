@@ -1,25 +1,25 @@
-import { Avatar, Name } from '@coinbase/onchainkit/identity';
-import { 
-  Transaction, 
-  TransactionButton, 
-  TransactionSponsor, 
-  TransactionStatus, 
-  TransactionStatusLabel, 
-  TransactionStatusAction, 
-} from '@coinbase/onchainkit/transaction'; 
-import { Wallet, ConnectWallet } from '@coinbase/onchainkit/wallet';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionSponsor,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel
+} from '@coinbase/onchainkit/transaction';
 import { FC } from 'react';
+import { parseUnits, type TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
+import { Wallet } from '~/components/Wallet';
 import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from '~/constants';
 import { splitItAbi } from '~/constants/abi/splitIt';
-import { parseUnits } from 'viem';
 
 type Props = {
   totalAmount: number;
   amountPerPerson: number;
+  onSplitCreated: (receipts: TransactionReceipt) => void;
 }
 
-const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0 }) => {
+const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated }) => {
   const { address } = useAccount();
  
   const contracts = [
@@ -40,8 +40,9 @@ const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0 }) => {
       address={SPLIT_IT_CONTRACT_ADDRESS}
       chainId={CHAIN.id}
       contracts={contracts}
+      onSuccess={(receipt) => onSplitCreated(receipt.transactionReceipts[0] as TransactionReceipt)}
     >
-      <TransactionButton />
+      <TransactionButton text="Split The Bill" />
       <TransactionSponsor />
       <TransactionStatus>
         <TransactionStatusLabel />
@@ -49,12 +50,7 @@ const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0 }) => {
       </TransactionStatus>
     </Transaction>  
   ) : (
-    <Wallet>
-      <ConnectWallet>
-        <Avatar className='h-6 w-6' />
-        <Name />
-      </ConnectWallet>
-    </Wallet>
+    <Wallet />
   );
 }
 

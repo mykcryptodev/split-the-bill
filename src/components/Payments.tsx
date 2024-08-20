@@ -1,26 +1,15 @@
-import { FC } from "react";
-import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
-import { splitItAbi } from "~/constants/abi/splitIt";
-import { type Split } from "~/types/split";
-import { useReadContract } from 'wagmi';
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
+import { FC } from "react";
+import { Payment } from "~/types/split";
 
 type Props = {
-  id: string;
-  split: Split;
+  payments: Payment[] | undefined;
 }
-export const Payments: FC<Props> = ({ split, id }) => {
-  const { data, isLoading } = useReadContract({
-    abi: splitItAbi,
-    address: SPLIT_IT_CONTRACT_ADDRESS,
-    functionName: "getPayments",
-    args: [BigInt(id)],
-  });
-  const payments = data;
+export const Payments: FC<Props> = ({ payments }) => {
   return (
-    <div>
-      <h1>Payments</h1>
-      <div>
+    <div className="flex flex-col gap-2">
+      <h1 className="font-bold text-xl mb-2">Payments</h1>
+      <div className="flex flex-col gap-2">
         {payments?.map((payment) => (
           <div key={payment.payer} className="flex gap-4">
             <div className="flex items-start gap-1">
@@ -35,7 +24,7 @@ export const Payments: FC<Props> = ({ split, id }) => {
             </div>
             <div>{payment.comment}</div>
           </div>
-        ))}
+        )).reverse()}
       </div>
     </div>
   );

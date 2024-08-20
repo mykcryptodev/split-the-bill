@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import { createThirdwebClient } from 'thirdweb';
 import { ThirdwebProvider } from 'thirdweb/react';
 import { type PublicClient } from "viem";
-import { APP_NAME, CHAIN } from '~/constants';
+import { APP_NAME, CHAIN, CHAIN_RPC } from '~/constants';
 import { env } from '~/env';
 
 const queryClient = new QueryClient();
@@ -43,14 +43,15 @@ const connectors = connectorsForWallets(
 export const wagmiConfig = createConfig({
   connectors,
   chains: [CHAIN],
+  syncConnectedChain: true,
   transports: {
-    [CHAIN.id]: http(),
+    [CHAIN.id]: http(CHAIN_RPC),
   },
 });
 
 export const publicClient = createPublicClient({
   chain: CHAIN,
-  transport: viemHttp(),
+  transport: viemHttp(CHAIN_RPC),
 }) as PublicClient;
 
 export const thirdwebClient = createThirdwebClient({

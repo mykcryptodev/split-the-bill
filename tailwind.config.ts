@@ -10,5 +10,15 @@ export default {
       },
     },
   },
+  daisyui: {
+    themes: [
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+        },
+        primary: "rgb(79, 70, 229)",
+      },
+    ],
+  },
   plugins: [require('daisyui')],
-} satisfies Config;
+} as Config;

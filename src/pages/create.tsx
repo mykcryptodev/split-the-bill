@@ -1,8 +1,14 @@
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
+import { isAddressEqual, type TransactionReceipt } from "viem";
 import CreateSplit from "~/components/Create";
+import CreateSplitEoaTw from "~/components/CreateEoaTw";
+import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
+import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
 
 export const Create: NextPage = () => {
+  const router = useRouter();
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
 
@@ -10,6 +16,20 @@ export const Create: NextPage = () => {
     if (numberOfPeople === 0) return 0;
     return totalAmount / numberOfPeople
   }, [totalAmount, numberOfPeople]);
+
+  const isSmartWallet = useIsSmartWallet();
+
+  const pushToSplitPage = (receipts: TransactionReceipt[]) => {
+    const receipt = receipts[0];
+    if (!receipt) return;
+    const logs = receipt.logs;
+    const logFromSplit = logs.find((log) => isAddressEqual(log.address, SPLIT_IT_CONTRACT_ADDRESS));
+    if (logFromSplit) {
+      const splitId = logFromSplit.topics[1];
+      console.log({ splitId });
+      router.push(`/split/${Number(splitId)}`);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-2 justify-center max-w-md mx-auto">
@@ -43,7 +63,25 @@ export const Create: NextPage = () => {
             <span className="label-text-alt">Everyone will pay {amountPerPerson} each.</span>
           </div>
         </label>
-        <CreateSplit totalAmount={totalAmount} amountPerPerson={amountPerPerson} />
+        {isSmartWallet ? (
+          <CreateSplit 
+            totalAmount={totalAmount} 
+            amountPerPerson={amountPerPerson}
+            onSplitCreated={(receipt) => {
+              console.log({ receipt });
+              pushToSplitPage(receipt as unknown as TransactionReceipt[]);
+            }}
+          />
+        ) : (
+          <CreateSplitEoaTw 
+            totalAmount={totalAmount} 
+            amountPerPerson={amountPerPerson}
+            onSplitCreated={(receipt) => {
+              console.log({ receipt });
+              pushToSplitPage([receipt]);
+            }}
+          />
+        )}
       </div>
     </div>
   );

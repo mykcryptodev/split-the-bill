@@ -4,3 +4,9 @@ export type Split = {
   amountPerPerson: bigint;
   totalPaid: bigint;
 }
+
+export type Payment = {
+  payer: string;
+  name: string;
+  comment: string;
+}
