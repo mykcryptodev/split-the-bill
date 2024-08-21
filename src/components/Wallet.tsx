@@ -53,7 +53,6 @@ export function Wallet() {
             await switchChainAsync({ chainId: chain.id });
           },
         });
-        console.log({ thirdwebWallet });
         void setActiveWallet(thirdwebWallet);
       }
     };

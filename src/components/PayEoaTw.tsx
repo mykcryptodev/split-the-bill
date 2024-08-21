@@ -21,7 +21,6 @@ type Props = {
 export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, onPaymentSuccessful }) => {
   const { address } = useAccount();
   const account = useActiveAccount();
-  console.log({ account });
 
   const { data: allowance, refetch } = useReadContract({
     abi: erc20Abi,

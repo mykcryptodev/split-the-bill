@@ -10,6 +10,7 @@ import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
 import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
+import { transformSplit } from "~/helpers/transformSplit";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
 import { type Payment, type Split as SplitT } from "~/types/split";
 
@@ -33,14 +34,7 @@ export const Split: NextPage<Props> = ({ id }) => {
     functionName: "splits",
     args: [BigInt(id)],
   });
-  const split: SplitT = {
-    creator: data?.[0] as `0x${string}` ?? SPLIT_IT_CONTRACT_ADDRESS,
-    creatorName: data?.[1],
-    billName: data?.[2],
-    totalAmount: BigInt(data?.[3] ?? 0),
-    amountPerPerson: BigInt(data?.[4] ?? 0),
-    totalPaid: BigInt(data?.[5] ?? 0),
-  };
+  const split = transformSplit(data);
 
   const { data: payments, refetch: refetchPayments } = useReadContract({
     abi: splitItAbi,

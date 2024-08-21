@@ -44,7 +44,7 @@ export const Create: NextPage = () => {
     const splitIdsCreatedByAddress = await readContract(wagmiConfig, {
       abi: splitItAbi,
       address: SPLIT_IT_CONTRACT_ADDRESS,
-      functionName: 'getSplitIdsByAddress',
+      functionName: 'getSplitIdsCreatedByAddress',
       args: [address]
     });
     // get the largest splitId from the list
