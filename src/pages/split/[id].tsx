@@ -75,7 +75,7 @@ export const Split: NextPage<Props> = ({ id }) => {
           )}
         </div>
         <div className="absolute right-0">
-          <Share split={split} formattedAmount={formattedAmount} />
+          <Share splitId={id} split={split} formattedAmount={formattedAmount} />
         </div>
       </div>
       <div className="text-center text-sm">is requesting</div>

@@ -1,10 +1,10 @@
 import { type FC } from "react";
 import { useSnackbar } from 'notistack';
 import { QRCode } from 'react-qrcode-logo';
-import { USDC_COLOR, USDC_IMAGE } from "~/constants";
+import { SPLIT_IT_CONTRACT_ADDRESS, USDC_COLOR, USDC_IMAGE } from "~/constants";
 import { Split } from "~/types/split";
 
-const QRCodeModal: FC<{ formattedAmount: string; }> = ({ formattedAmount }) => {
+const QRCodeModal: FC<{ formattedAmount: string; split: Split; splitId: string; }> = ({ formattedAmount, split, splitId }) => {
   return (
     <>
       <label htmlFor="qr-code-modal" className="btn btn-sm btn-ghost">
@@ -29,7 +29,7 @@ const QRCodeModal: FC<{ formattedAmount: string; }> = ({ formattedAmount }) => {
               {`Scan this to pay ${formattedAmount} USDC`}
             </h3>
             <QRCode 
-              value="https://github.com/gcoro/react-qrcode-logo"
+              value={window.location.href}
               size={256}
               fgColor={USDC_COLOR}
               logoImage={USDC_IMAGE}
@@ -47,11 +47,12 @@ const QRCodeModal: FC<{ formattedAmount: string; }> = ({ formattedAmount }) => {
 }
 
 type Props = {
+  splitId: string;
   split: Split;
   formattedAmount: string;
 }
 
-export const Share: FC<Props> = ({ split, formattedAmount }) => {
+export const Share: FC<Props> = ({ splitId, split, formattedAmount }) => {
   const { enqueueSnackbar } = useSnackbar()
   const handleShare = async () => {
     if (navigator.share) {
@@ -68,7 +69,7 @@ export const Share: FC<Props> = ({ split, formattedAmount }) => {
   }
   return (
     <div className="flex">
-      <QRCodeModal formattedAmount={formattedAmount} />
+      <QRCodeModal formattedAmount={formattedAmount} split={split} splitId={splitId} />
       <button
         className="btn btn-sm btn-ghost"
         onClick={handleShare}
