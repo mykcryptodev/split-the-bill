@@ -35,8 +35,8 @@ export const Split: NextPage<Props> = ({ id }) => {
   });
   const split: SplitT = {
     creator: data?.[0] as `0x${string}` ?? SPLIT_IT_CONTRACT_ADDRESS,
-    creatorName: data?.[1] as string ?? '',
-    billName: data?.[2] as string ?? '',
+    creatorName: data?.[1],
+    billName: data?.[2],
     totalAmount: BigInt(data?.[3] ?? 0),
     amountPerPerson: BigInt(data?.[4] ?? 0),
     totalPaid: BigInt(data?.[5] ?? 0),
