@@ -5,6 +5,7 @@ import OnchainProviders from "~/providers/OnchainProviders";
 import { api } from "~/utils/api";
 import { SnackbarProvider } from 'notistack';
 
+import '@coinbase/onchainkit/styles.css';
 import "~/styles/globals.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
