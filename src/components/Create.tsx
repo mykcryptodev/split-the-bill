@@ -63,7 +63,9 @@ const CreateSplit: FC<Props> = ({
       </TransactionStatus>
     </Transaction>  
   ) : (
-    <Wallet />
+    <div className="w-full justify-center flex">
+      <Wallet />
+    </div>
   );
 }
 

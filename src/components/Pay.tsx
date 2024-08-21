@@ -61,7 +61,9 @@ export const Pay: FC<Props> = ({ split, id, formattedAmount, name, comment, onPa
       </TransactionStatus>
     </Transaction>  
   ) : (
-    <Wallet />
+    <div className="w-full justify-center flex">
+      <Wallet />
+    </div>
   );
 }
 

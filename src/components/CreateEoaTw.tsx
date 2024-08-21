@@ -54,7 +54,9 @@ const CreateSplitEoaTw: FC<Props> = ({
       Split The Bill
     </TransactionButton>
   ) : (
-    <Wallet />
+    <div className="w-full justify-center flex">
+      <Wallet />
+    </div>
   );
 }
 

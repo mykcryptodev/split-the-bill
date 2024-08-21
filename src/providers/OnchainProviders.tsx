@@ -47,6 +47,8 @@ export const wagmiConfig = createConfig({
   syncConnectedChain: true,
   transports: {
     [CHAIN.id]: http(CHAIN_RPC),
+    8453: http(CHAIN_RPC),
+    84532: http(CHAIN_RPC),
   },
 });
 

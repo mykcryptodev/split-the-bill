@@ -1,18 +1,21 @@
 import { base as twBase, baseSepolia as twBaseSepolia } from "thirdweb/chains";
-import { baseSepolia } from "wagmi/chains";
-
+import { base, baseSepolia } from "wagmi/chains";
 import { env } from "~/env";
 
+const isBaseMainnet = ({ chainId }: { chainId: number }) => chainId === base.id;
+
 export const APP_NAME = "Split The Bill";
-export const CHAIN = baseSepolia;
-export const THIRDWEB_CHAIN = CHAIN === baseSepolia ? twBaseSepolia : twBase;
+export const CHAIN = isBaseMainnet({ chainId: Number(env.NEXT_PUBLIC_CHAIN_ID) }) ? base : baseSepolia;
 
-export const CHAIN_RPC = CHAIN === baseSepolia ? env.NEXT_PUBLIC_RPC_URL_SEPOLIA : env.NEXT_PUBLIC_RPC_URL;
 
-export const SPLIT_IT_CONTRACT_ADDRESS: `0x${string}` = "0x5e4F467913238f53184fB27326C769296D959840";//"0xccA19f942D48EF7B4e89B050f65b15ea9600648f"; //"0x54EE636146Bf634b56ffbb09ca689a8eAFC841bc"; // "0xBa427F34718A538f454Cf7Db73867b4d98AFB7A9"
+export const THIRDWEB_CHAIN = isBaseMainnet({ chainId: CHAIN.id }) ? twBase : twBaseSepolia;
 
-export const USDC_ADDRESS: `0x${string}` = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"; //"0xb4B45c165b35aD64421bD6aBFBc6A3781e7ADbF7"
-export const USDC_DECIMALS = 6; // 18
+export const CHAIN_RPC = isBaseMainnet({ chainId: CHAIN.id }) ? env.NEXT_PUBLIC_RPC_URL : env.NEXT_PUBLIC_RPC_URL_SEPOLIA;
+
+export const SPLIT_IT_CONTRACT_ADDRESS: `0x${string}` = isBaseMainnet({ chainId: CHAIN.id }) ? "0xA242dC8f4b07aD29D94Bb4e7e118adbB91B43dBD" : "0x5e4F467913238f53184fB27326C769296D959840";
+
+export const USDC_ADDRESS: `0x${string}` = isBaseMainnet({ chainId: CHAIN.id }) ? "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" : "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+export const USDC_DECIMALS = 6;
 export const USDC_IMAGE = "/images/usdc.png";
 export const USDC_COLOR = "#2671C4";
 
