@@ -5,7 +5,7 @@ import { useAccount, useReadContract } from 'wagmi';
 
 import { Wallet } from '~/components/Wallet';
 import { SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
-import { erc20Abi } from "~/constants/abi/erc20";
+import { erc20Abi } from 'viem';
 import { thirdwebClient } from '~/providers/OnchainProviders';
 import { type Split } from "~/types/split";
 

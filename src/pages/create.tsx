@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { isAddressEqual, type TransactionReceipt } from "viem";
 
 import CreateSplit from "~/components/Create";
 import CreateSplitEoaTw from "~/components/CreateEoaTw";

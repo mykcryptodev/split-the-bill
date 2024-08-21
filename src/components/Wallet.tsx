@@ -19,11 +19,15 @@ import { defineChain } from 'thirdweb';
 import { viemAdapter } from "thirdweb/adapters/viem";
 import { useSetActiveWallet } from 'thirdweb/react';
 import { createWalletAdapter } from 'thirdweb/wallets';
-import { useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
+import { useDisconnect, useSwitchChain, useWalletClient, useAccount } from "wagmi";
 
 import { thirdwebClient } from '~/providers/OnchainProviders';
- 
+import Balance from './Balance';
+import { USDC_ADDRESS } from '~/constants';
+
 export function Wallet() {
+  const { address } = useAccount();
+
   const setActiveWallet = useSetActiveWallet();
   const { data: walletClient } = useWalletClient();
   const { disconnectAsync } = useDisconnect();
@@ -60,8 +64,11 @@ export function Wallet() {
     <div className="flex">
       <WalletComponent>
         <ConnectWallet withWalletAggregator>
-          <Avatar className="h-6 w-6" />
-          <Name />
+          <div className="flex items-center gap-1">
+            <Avatar className="h-6 w-6" />
+            <Name />
+            {address && (<Balance className="ml-2" token={USDC_ADDRESS} address={address} />)}
+          </div>
         </ConnectWallet>
         <WalletDropdown>
           <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>

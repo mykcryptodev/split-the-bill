@@ -11,7 +11,7 @@ import { useAccount, useReadContract } from 'wagmi';
 
 import { Wallet } from '~/components/Wallet';
 import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
-import { erc20Abi } from "~/constants/abi/erc20";
+import { erc20Abi } from 'viem';
 import { splitItAbi } from '~/constants/abi/splitIt';
 import { type Split } from "~/types/split";
 
