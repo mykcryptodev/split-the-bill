@@ -1,7 +1,6 @@
 import { type FC } from 'react';
 import { getContract, prepareContractCall, ZERO_ADDRESS } from 'thirdweb';
 import { TransactionButton } from 'thirdweb/react';
-import { type TransactionReceipt } from 'thirdweb/transaction';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -10,12 +9,13 @@ import { SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, USDC_DECIMALS } from '~/cons
 import { thirdwebClient } from '~/providers/OnchainProviders';
 
 type Props = {
+  isDisabled: boolean;
   totalAmount: number;
   amountPerPerson: number;
-  onSplitCreated: (receipt: TransactionReceipt) => void;
+  onSplitCreated: () => void;
 }
 
-const CreateSplitEoaTw: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated }) => {
+const CreateSplitEoaTw: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated, isDisabled }) => {
   const { address } = useAccount();
 
   const transaction = prepareContractCall({
@@ -34,10 +34,11 @@ const CreateSplitEoaTw: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onS
  
   return address ? (
     <TransactionButton
+      disabled={isDisabled}
       transaction={() => transaction}
       unstyled
       className="btn btn-primary btn-block"
-      onTransactionConfirmed={(receipt) => onSplitCreated(receipt)}
+      onTransactionConfirmed={() => onSplitCreated()}
     >
       Split The Bill
     </TransactionButton>

@@ -7,7 +7,7 @@ import {
   TransactionStatusLabel
 } from '@coinbase/onchainkit/transaction';
 import { type FC } from 'react';
-import { parseUnits, type TransactionReceipt } from 'viem';
+import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { Wallet } from '~/components/Wallet';
@@ -15,12 +15,13 @@ import { CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from '~/constants';
 import { splitItAbi } from '~/constants/abi/splitIt';
 
 type Props = {
+  isDisabled: boolean;
   totalAmount: number;
   amountPerPerson: number;
-  onSplitCreated: (receipts: TransactionReceipt) => void;
+  onSplitCreated: () => void;
 }
 
-const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated }) => {
+const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated, isDisabled }) => {
   const { address } = useAccount();
  
   const contracts = [
@@ -41,9 +42,9 @@ const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitC
       address={SPLIT_IT_CONTRACT_ADDRESS}
       chainId={CHAIN.id}
       contracts={contracts}
-      onSuccess={(receipt) => onSplitCreated(receipt.transactionReceipts[0]!)}
+      onSuccess={() => onSplitCreated()}
     >
-      <TransactionButton text="Split The Bill" />
+      <TransactionButton text="Split The Bill" disabled={isDisabled} />
       <TransactionSponsor />
       <TransactionStatus>
         <TransactionStatusLabel />

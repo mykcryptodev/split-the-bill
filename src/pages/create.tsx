@@ -6,30 +6,37 @@ import { isAddressEqual, type TransactionReceipt } from "viem";
 import CreateSplit from "~/components/Create";
 import CreateSplitEoaTw from "~/components/CreateEoaTw";
 import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
+import { maxDecimals } from "~/helpers/maxDecimals";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
+import { readContract } from '@wagmi/core'
+import { useAccount } from "wagmi";
+import { wagmiConfig } from "~/providers/OnchainProviders";
+import { splitItAbi } from "~/constants/abi/splitIt";
 
 export const Create: NextPage = () => {
   const router = useRouter();
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
+  const { address } = useAccount();
+  const [totalAmount, setTotalAmount] = useState<number>();
+  const [numberOfPeople, setNumberOfPeople] = useState<number>();
 
   const amountPerPerson = useMemo(() => {
-    if (numberOfPeople === 0) return 0;
+    if (!numberOfPeople || !totalAmount) return 0;
     return totalAmount / numberOfPeople
   }, [totalAmount, numberOfPeople]);
 
   const isSmartWallet = useIsSmartWallet();
 
-  const pushToSplitPage = (receipts: TransactionReceipt[]) => {
-    const receipt = receipts[0];
-    if (!receipt) return;
-    const logs = receipt.logs;
-    const logFromSplit = logs.find((log) => isAddressEqual(log.address, SPLIT_IT_CONTRACT_ADDRESS));
-    if (logFromSplit) {
-      const splitId = logFromSplit.topics[1];
-      console.log({ splitId });
-      void router.push(`/split/${Number(splitId)}`);
-    }
+  const pushToSplitPage = async () => {
+    if (!address) return;
+    const splitIdsCreatedByAddress = await readContract(wagmiConfig, {
+      abi: splitItAbi,
+      address: SPLIT_IT_CONTRACT_ADDRESS,
+      functionName: 'getSplitIdsByAddress',
+      args: [address]
+    });
+    // get the largest splitId from the list
+    const splitId = splitIdsCreatedByAddress.reduce((acc, val) => Math.max(acc, Number(val)), 0);
+    void router.push(`/split/${splitId}`);
   };
 
   return (
@@ -44,8 +51,13 @@ export const Create: NextPage = () => {
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Total Amount"
             type="number"
+            step="0.01" // Set the step to 0.01 for 2 maximum decimals
             value={totalAmount}
-            onChange={(e) => setTotalAmount(Number(e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "") return setTotalAmount(undefined);
+              setTotalAmount(Number(maxDecimals(e.target.value, 2)));
+            }}
           />
         </label>
         <label className="form-control w-full">
@@ -56,31 +68,27 @@ export const Create: NextPage = () => {
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="Number of People"
             type="number"
-            value={numberOfPeople}
+            value={numberOfPeople?.toString()}
             onChange={(e) => setNumberOfPeople(Number(e.target.value))}
           />
           <div className="label">
             <span />
-            <span className="label-text-alt">Everyone will pay {amountPerPerson} each.</span>
+            <span className="label-text-alt">Everyone will pay {amountPerPerson.toFixed(2)} each.</span>
           </div>
         </label>
         {isSmartWallet ? (
           <CreateSplit 
-            totalAmount={totalAmount} 
+            isDisabled={!totalAmount || !numberOfPeople}
+            totalAmount={totalAmount ?? 0} 
             amountPerPerson={amountPerPerson}
-            onSplitCreated={(receipt) => {
-              console.log({ receipt });
-              void pushToSplitPage(receipt as unknown as TransactionReceipt[]);
-            }}
+            onSplitCreated={() => void pushToSplitPage()}
           />
         ) : (
           <CreateSplitEoaTw 
-            totalAmount={totalAmount} 
+            isDisabled={!totalAmount || !numberOfPeople}
+            totalAmount={totalAmount ?? 0} 
             amountPerPerson={amountPerPerson}
-            onSplitCreated={(receipt) => {
-              console.log({ receipt });
-              void pushToSplitPage([receipt]);
-            }}
+            onSplitCreated={() => void pushToSplitPage()}
           />
         )}
       </div>
