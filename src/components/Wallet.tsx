@@ -82,7 +82,7 @@ export function Wallet() {
             rel="noopener noreferrer"
           >
             My Splits
-          </WalletDropdownLink> 
+          </WalletDropdownLink>
           <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com">
             Wallet
           </WalletDropdownLink>

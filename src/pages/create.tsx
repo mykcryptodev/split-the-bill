@@ -47,7 +47,7 @@ export const Create: NextPage = () => {
             <span className="label-text">Total Amount</span>
           </div>
           <input
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded-lg"
             placeholder="Total Amount"
             type="number"
             step="0.01" // Set the step to 0.01 for 2 maximum decimals
@@ -64,7 +64,7 @@ export const Create: NextPage = () => {
             <span className="label-text">How many people?</span>
           </div>
           <input
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded-lg"
             placeholder="Number of People"
             type="number"
             value={numberOfPeople?.toString()}

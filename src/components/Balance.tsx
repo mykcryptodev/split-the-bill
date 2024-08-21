@@ -1,7 +1,7 @@
 import { TokenChip } from "@coinbase/onchainkit/token";
 import { type FC } from "react";
 import { useReadContracts } from 'wagmi';
-import { CHAIN } from "~/constants";
+import { CHAIN, USDC_IMAGE } from "~/constants";
 import { erc20Abi, formatUnits } from 'viem';
 import { maxDecimals } from "~/helpers/maxDecimals";
 
@@ -33,7 +33,7 @@ export const Balance: FC<Props> = ({ address, token, className }) => {
     address: token,
     chainId: CHAIN.id,
     decimals,
-    image: "/images/usdc.png", // usdc only for now
+    image: USDC_IMAGE, // usdc only for now
     name: `${maxDecimals(formatUnits(balance, decimals), 2)}`,
     symbol: `${maxDecimals(formatUnits(balance, decimals), 2)}`,
   };

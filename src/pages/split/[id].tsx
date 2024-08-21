@@ -7,6 +7,7 @@ import { useAccount, useReadContract } from 'wagmi';
 import Pay from "~/components/Pay";
 import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
+import { Share } from "~/components/Share";
 import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
@@ -45,7 +46,6 @@ export const Split: NextPage<Props> = ({ id }) => {
     functionName: "getPayments",
     args: [BigInt(id)],
   });
-  console.log({ data, split });
 
   const refetch = () => {
     void refetchSplit();
@@ -66,13 +66,16 @@ export const Split: NextPage<Props> = ({ id }) => {
   
   return (
     <div className="flex flex-col gap-1 mt-4">
-      <div className="flex w-full justify-center">
+      <div className="flex w-full justify-center relative">
         <div className="flex items-center gap-1">
           <Avatar
             address={split.creator}
             className="h-6 w-6"
           />
           <Name address={split.creator} />
+        </div>
+        <div className="absolute right-0">
+          <Share split={split} formattedAmount={formattedAmount} />
         </div>
       </div>
       <div className="text-center text-sm">is requesting</div>
