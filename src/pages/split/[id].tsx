@@ -35,9 +35,11 @@ export const Split: NextPage<Props> = ({ id }) => {
   });
   const split: SplitT = {
     creator: data?.[0] as `0x${string}` ?? SPLIT_IT_CONTRACT_ADDRESS,
-    totalAmount: BigInt(data?.[1] ?? 0),
-    amountPerPerson: BigInt(data?.[2] ?? 0),
-    totalPaid: BigInt(data?.[3] ?? 0),
+    creatorName: data?.[1] as string ?? '',
+    billName: data?.[2] as string ?? '',
+    totalAmount: BigInt(data?.[3] ?? 0),
+    amountPerPerson: BigInt(data?.[4] ?? 0),
+    totalPaid: BigInt(data?.[5] ?? 0),
   };
 
   const { data: payments, refetch: refetchPayments } = useReadContract({
@@ -72,7 +74,11 @@ export const Split: NextPage<Props> = ({ id }) => {
             address={split.creator}
             className="h-6 w-6"
           />
-          <Name address={split.creator} />
+          {split.creatorName ? (
+            <span className="font-bold text-lg">{split.creatorName}</span>
+          ) : (
+            <Name address={split.creator} />
+          )}
         </div>
         <div className="absolute right-0">
           <Share split={split} formattedAmount={formattedAmount} />
@@ -82,6 +88,9 @@ export const Split: NextPage<Props> = ({ id }) => {
       <div className="text-center text-2xl font-bold">
         {formattedAmount} USDC
       </div>
+      {split.billName && (
+        <div className="text-center text-sm">for {split.billName}</div>
+      )}
       <div className="my-2" />
       <button
         className={`btn btn-primary ${showInputs || !address ? 'hidden' : ''}`}

@@ -1,5 +1,7 @@
 export type Split = {
   creator: `0x${string}`;
+  creatorName: string;
+  billName: string;
   totalAmount: bigint;
   amountPerPerson: bigint;
   totalPaid: bigint;

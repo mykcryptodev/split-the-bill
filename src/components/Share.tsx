@@ -4,7 +4,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { USDC_COLOR, USDC_IMAGE } from "~/constants";
 import { Split } from "~/types/split";
 
-const QRCodeModal: FC = () => {
+const QRCodeModal: FC<{ formattedAmount: string; }> = ({ formattedAmount }) => {
   return (
     <>
       <label htmlFor="qr-code-modal" className="btn btn-sm btn-ghost">
@@ -25,7 +25,9 @@ const QRCodeModal: FC = () => {
             ✕
           </button>
           <div className="flex flex-col gap-2">
-            <h3 className="text-lg text-center font-bold">Scan this to pay</h3>
+            <h3 className="text-lg text-center font-bold">
+              {`Scan this to pay ${formattedAmount} USDC`}
+            </h3>
             <QRCode 
               value="https://github.com/gcoro/react-qrcode-logo"
               size={256}
@@ -55,7 +57,7 @@ export const Share: FC<Props> = ({ split, formattedAmount }) => {
     if (navigator.share) {
       await navigator.share({
         title: 'Split The Bill',
-        text: `${split.creator} is requesting ${formattedAmount} USDC`,
+        text: `Here is the link for splitting the bill. It came out to ${formattedAmount} USDC each.`,
         url: window.location.href,
       });
     } else {
@@ -66,7 +68,7 @@ export const Share: FC<Props> = ({ split, formattedAmount }) => {
   }
   return (
     <div className="flex">
-      <QRCodeModal />
+      <QRCodeModal formattedAmount={formattedAmount} />
       <button
         className="btn btn-sm btn-ghost"
         onClick={handleShare}

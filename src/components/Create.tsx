@@ -18,10 +18,19 @@ type Props = {
   isDisabled: boolean;
   totalAmount: number;
   amountPerPerson: number;
+  name?: string;
+  title?: string;
   onSplitCreated: () => void;
 }
 
-const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated, isDisabled }) => {
+const CreateSplit: FC<Props> = ({ 
+  totalAmount = 0, 
+  amountPerPerson = 0,
+  name = '',
+  title = '',
+  onSplitCreated, 
+  isDisabled
+}) => {
   const { address } = useAccount();
  
   const contracts = [
@@ -31,6 +40,8 @@ const CreateSplit: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitC
       functionName: 'createSplit',
       args: [
         address,
+        name,
+        title,
         BigInt(parseUnits(totalAmount.toString(), USDC_DECIMALS)),
         BigInt(parseUnits(amountPerPerson.toString(), USDC_DECIMALS)),
       ],

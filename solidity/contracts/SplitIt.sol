@@ -22,6 +22,8 @@ contract SplitIt {
     // a structure to represent a bill
     struct Split {
         address creator; // Address of the creator
+        string creatorName; // Name of the bill
+        string billName; // Name of the bill
         uint256 totalAmount; // Total amount of the bill
         uint256 amountPerPerson; // Amount each person needs to pay
         uint256 totalPaid; // Total amount paid so far
@@ -43,7 +45,14 @@ contract SplitIt {
     uint256 public splitCounter;
 
     // event to emit when a new split is created
-    event SplitCreated(uint256 indexed splitId, address indexed creator, uint256 totalAmount, uint256 amountPerPerson);
+    event SplitCreated(
+        uint256 indexed splitId, 
+        address indexed creator, 
+        string creatorName,
+        string billName,
+        uint256 totalAmount, 
+        uint256 amountPerPerson
+    );
 
     // event to emit when a participant pays their share of the bill
     event Paid(uint256 indexed splitId, address indexed participant, uint256 amount);
@@ -59,19 +68,41 @@ contract SplitIt {
     /**
      * @dev Function to create a new split
      * @param _creator The address of the creator
+     * @param _creatorName The name of the creator
+     * @param _billName The name of the bill
      * @param _totalAmount The total amount of the bill
      * @param _amountPerPerson The amount each person needs to pay
     */
-    function createSplit(address _creator, uint256 _totalAmount, uint256 _amountPerPerson) external {
+    function createSplit(
+        address _creator,
+        string memory _creatorName,
+        string memory _billName,
+        uint256 _totalAmount, 
+        uint256 _amountPerPerson
+    ) external {
         require(_totalAmount > 0, "Total amount should be greater than 0");
         require(_amountPerPerson > 0, "Amount per person should be greater than 0");
 
-        Split memory split = Split(_creator, _totalAmount, _amountPerPerson, 0);
+        Split memory split = Split(
+            _creator, 
+            _creatorName,
+            _billName,
+            _totalAmount, 
+            _amountPerPerson, 
+            0
+        );
         splits[splitCounter] = split;
 
         splitIdsByAddress[_creator].push(splitCounter);
 
-        emit SplitCreated(splitCounter, _creator, _totalAmount, _amountPerPerson);
+        emit SplitCreated(
+            splitCounter, 
+            _creator, 
+            _creatorName,
+            _billName,
+            _totalAmount, 
+            _amountPerPerson
+        );
 
         splitCounter++;
     }
@@ -96,6 +127,8 @@ contract SplitIt {
         payments[_splitId].push(payment);
 
         usdc.safeTransferFrom(_fundedFrom, split.creator, amount);
+
+        paymentsByAddress[_address].push(_splitId);
 
         emit Paid(_splitId, _address, amount);
     }

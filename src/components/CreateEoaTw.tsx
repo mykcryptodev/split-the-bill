@@ -12,10 +12,19 @@ type Props = {
   isDisabled: boolean;
   totalAmount: number;
   amountPerPerson: number;
+  name?: string;
+  title?: string;
   onSplitCreated: () => void;
 }
 
-const CreateSplitEoaTw: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onSplitCreated, isDisabled }) => {
+const CreateSplitEoaTw: FC<Props> = ({ 
+  totalAmount = 0, 
+  amountPerPerson = 0,
+  name = '',
+  title = '',
+  onSplitCreated, 
+  isDisabled
+}) => {
   const { address } = useAccount();
 
   const transaction = prepareContractCall({
@@ -24,9 +33,11 @@ const CreateSplitEoaTw: FC<Props> = ({ totalAmount = 0, amountPerPerson = 0, onS
       chain: THIRDWEB_CHAIN,
       address: SPLIT_IT_CONTRACT_ADDRESS,
     }),
-    method: "function createSplit(address _creator, uint256 _totalAmount, uint256 _amountPerPerson) public",
+    method: "function createSplit(address _creator, string _creatorName, string _billName, uint256 _totalAmount, uint256 _amountPerPerson) public",
     params: [
       address ?? ZERO_ADDRESS,
+      name,
+      title,
       BigInt(parseUnits(totalAmount.toString(), USDC_DECIMALS)),
       BigInt(parseUnits(amountPerPerson.toString(), USDC_DECIMALS)),
     ],
