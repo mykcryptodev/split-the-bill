@@ -61,14 +61,11 @@ export function Wallet() {
   }, [disconnectAsync, setActiveWallet, switchChainAsync, walletClient]);
 
   return (
-    <div className="flex">
+    <div className="flex gap-2 items-center">
       <WalletComponent>
         <ConnectWallet withWalletAggregator>
-          <div className="flex items-center gap-1">
-            <Avatar className="h-6 w-6" />
-            <Name />
-            {address && (<Balance className="ml-2" token={USDC_ADDRESS} address={address} />)}
-          </div>
+          <Avatar className="h-6 w-6" />
+          <Name />
         </ConnectWallet>
         <WalletDropdown>
           <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
@@ -83,13 +80,24 @@ export function Wallet() {
           >
             My Splits
           </WalletDropdownLink>
-          <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com">
-            Wallet
-          </WalletDropdownLink>
-          <WalletDropdownFundLink />
           <WalletDropdownDisconnect />
         </WalletDropdown>
       </WalletComponent>
+      {address && (
+        <WalletComponent>
+          <ConnectWallet withWalletAggregator>
+            <div className="flex items-center gap-1">
+              {address && (<Balance className="p-0" token={USDC_ADDRESS} address={address} />)}
+            </div>
+          </ConnectWallet>
+          <WalletDropdown>
+            <WalletDropdownFundLink />
+            <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com">
+              Wallet
+            </WalletDropdownLink>
+          </WalletDropdown>
+        </WalletComponent>
+      )}
     </div>
   );
 }
