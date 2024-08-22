@@ -47,7 +47,7 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
     if (isAddressEqual(paymentToken.address, USDC_ADDRESS)) {
       return SPLIT_IT_CONTRACT_ADDRESS;
     }
-    return AGGREGATOR_ADDRESS;
+    return MULTICALL;
   }, [paymentToken.address]);
 
   console.log({ paymentToken, paymentTokenPrice, priceInToken, formatAmount })
@@ -112,44 +112,66 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
 
   const handleSendTransaction = async () => {
     if (!address) return;
-    const conversionTransaction = await getConversionEncodedData({
-      from: address,
+    const userTransfersTokensToMulticallTx = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "transferFrom",
+      args: [address, MULTICALL, parseUnits(priceInToken, paymentToken.decimals)],
+    });
+    const multicallApprovesAggregatorTx = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [AGGREGATOR_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
+    });
+    const multicallConvertsTokensToUsdcTx = await getConversionEncodedData({
+      from: MULTICALL,
       to: MULTICALL,
       chainId: CHAIN.id,
       paymentToken: paymentToken.address,
       paymentAmount: parseUnits(priceInToken, paymentToken.decimals).toString(),
     });
-    console.log({ conversionTransaction });
+    const multicallApprovesSplitItTx = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [SPLIT_IT_CONTRACT_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
+    });
+    const splitItPayTx = encodeFunctionData({
+      abi: splitItAbi,
+      functionName: "pay",
+      args: [
+        BigInt(id),
+        address,
+        MULTICALL,
+        name,
+        comment,
+      ],
+    });
+    console.log({ multicallConvertsTokensToUsdcTx });
     const multicallData = [
+      {
+        target: paymentToken.address,
+        allowFailure: false,
+        callData: userTransfersTokensToMulticallTx,
+      },
+      {
+        target: paymentToken.address,
+        allowFailure: false,
+        callData: multicallApprovesAggregatorTx,
+      },
       {
         target: AGGREGATOR_ADDRESS,
         allowFailure: true,
-        callData: conversionTransaction.data.data as `0x${string}`,
+        callData: multicallConvertsTokensToUsdcTx.data.data as `0x${string}`,
       },
-      // {
-      //   target: USDC_ADDRESS,
-      //   allowFailure: false,
-      //   callData: encodeFunctionData({
-      //     abi: erc20Abi,
-      //     functionName: "approve",
-      //     args: [SPLIT_IT_CONTRACT_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
-      //   }),
-      // },
-      // {
-      //   target: SPLIT_IT_CONTRACT_ADDRESS,
-      //   allowFailure: false,
-      //   callData: encodeFunctionData({
-      //     abi: splitItAbi,
-      //     functionName: "pay",
-      //     args: [
-      //       BigInt(id),
-      //       address,
-      //       MULTICALL,
-      //       name,
-      //       comment,
-      //     ],
-      //   }),
-      // }
+      {
+        target: USDC_ADDRESS,
+        allowFailure: false,
+        callData: multicallApprovesSplitItTx,
+      },
+      {
+        target: SPLIT_IT_CONTRACT_ADDRESS,
+        allowFailure: false,
+        callData: splitItPayTx,
+      },
     ];
     const encodedMulticall = encodeFunctionData({
       abi: multicall3Abi,
