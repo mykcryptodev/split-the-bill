@@ -1,9 +1,9 @@
 import { getTokens, TokenChip, TokenRow, TokenSearch, type Token } from "@coinbase/onchainkit/token";
 import { useCallback, useState, type FC } from "react";
 import { useReadContract, useAccount } from "wagmi";
-import { wagmiConfig } from "~/providers/OnchainProviders";
 import { erc20Abi, formatUnits } from "viem";
 import { ZERO_ADDRESS } from "thirdweb";
+import { Portal } from "~/components/Portal";
 
 type Props = {
   onTokenSelected: (token: Token) => void;
@@ -13,7 +13,6 @@ type Props = {
 
 export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) => {
   const { address } = useAccount();
-  const [token, setToken] = useState<Token>();
   const [tokenOptions, setTokenOptions] = useState<Token[]>([]);
 
   const defaultToken = {
@@ -50,7 +49,6 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) =
       <TokenRow 
         key={token.address}
         onClick={() => {
-          setToken(token);
           onTokenSelected(token);
           // close modal
           document.getElementById(`token-picker-modal-${id}`)?.click();
@@ -65,21 +63,23 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) =
   return (
     <>
       <label htmlFor={`token-picker-modal-${id}`} className="cursor-pointer">
-        <TokenChip token={selectedToken ?? defaultToken} className="pointer-events-none" />
+        <TokenChip token={selectedToken ?? defaultToken} className="pointer-events-none down-chevron" />
       </label>
 
-      <input type="checkbox" id={`token-picker-modal-${id}`} className="modal-toggle" />
-      <div className="modal modal-bottom sm:modal-middle" role="dialog">
-        <div className="modal-box">
-          <TokenSearch onChange={handleChange} delayMs={200} />
-          <div className="flex flex-col gap-2 mt-4 max-h-96 overflow-y-auto">
-            {tokenOptions.map((token) => (
-              <TokenOption token={token} key={token.address} />
-            ))}
+      <Portal>
+        <input type="checkbox" id={`token-picker-modal-${id}`} className="modal-toggle" />
+        <div className="modal modal-bottom sm:modal-middle" role="dialog">
+          <div className="modal-box">
+            <TokenSearch onChange={handleChange} delayMs={200} />
+            <div className="flex flex-col gap-2 mt-4 max-h-96 overflow-y-auto">
+              {tokenOptions.map((token) => (
+                <TokenOption token={token} key={token.address} />
+              ))}
+            </div>
           </div>
+          <label className="modal-backdrop" htmlFor={`token-picker-modal-${id}`}>Close</label>
         </div>
-        <label className="modal-backdrop" htmlFor={`token-picker-modal-${id}`}>Close</label>
-      </div>
+      </Portal>
     </>
   )
 

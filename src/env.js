@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    SIMPLEHASH_API_KEY: z.string(),
   },
 
   /**
@@ -36,6 +37,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RPC_URL: process.env.NEXT_PUBLIC_RPC_URL,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
     NEXT_PUBLIC_ONCHAINKIT_API_KEY: process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY,
+    SIMPLEHASH_API_KEY: process.env.SIMPLEHASH_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -15,6 +15,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <Layout>
           <Component {...pageProps} />
         </Layout>
+        <div id="portal" />
       </SnackbarProvider>
     </OnchainProviders>
   );
