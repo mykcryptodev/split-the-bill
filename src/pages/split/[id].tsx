@@ -147,14 +147,14 @@ export const Split: NextPage<Props> = ({ id }) => {
               onPaymentSuccessful={() => void refetch()}
             />
           )}
-          <PayAnyCrypto 
+          {/* <PayAnyCrypto 
             split={split} 
             id={id}  
             formattedAmount={formattedAmount} 
             name={name}
             comment={comment}
             onPaymentSuccessful={() => void refetch()}
-          />
+          /> */}
         </div>
       )}
       <div className="divider" />

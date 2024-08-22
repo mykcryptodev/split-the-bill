@@ -1,13 +1,18 @@
-import { type FC,useMemo } from "react";
+import { type FC,useEffect,useMemo, useState } from "react";
 import { getContract, prepareContractCall } from 'thirdweb';
 import { TransactionButton } from 'thirdweb/react';
 import { useAccount, useReadContract } from 'wagmi';
 
 import { Wallet } from '~/components/Wallet';
-import { SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
+import { SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, ZERO_ADDRESS } from '~/constants';
 import { erc20Abi } from 'viem';
 import { thirdwebClient } from '~/providers/OnchainProviders';
 import { type Split } from "~/types/split";
+import { Token } from "@coinbase/onchainkit/token";
+import { USDC_TOKEN } from "~/constants/defaultTokens";
+import TokenPicker from "./TokenPicker";
+import { api } from "~/utils/api";
+import { maxDecimals } from "~/helpers/maxDecimals";
 
 type Props = {
   id: string;
@@ -21,9 +26,22 @@ type Props = {
 export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, onPaymentSuccessful }) => {
   const { address } = useAccount();
 
+  const [paymentToken, setPaymentToken] = useState<Token>(USDC_TOKEN);
+  const { data: paymentTokenPrice } = api.simpleHash.getTokenPrice.useQuery({
+    address: paymentToken?.address,
+  });
+  const [priceInToken, setPriceInToken] = useState<string>('');
+  useEffect(() => {
+    if (paymentTokenPrice) {
+      setPriceInToken(
+        (Number(formattedAmount.replace('$', '')) / paymentTokenPrice).toString(),
+      )
+    }
+  }, [paymentTokenPrice, paymentToken, split.amountPerPerson]);
+
   const { data: allowance, refetch } = useReadContract({
     abi: erc20Abi,
-    address: USDC_ADDRESS,
+    address: paymentToken.address,
     functionName: "allowance",
     args: [address ?? ZERO_ADDRESS, SPLIT_IT_CONTRACT_ADDRESS],
   });
@@ -38,20 +56,28 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
       contract: getContract({
         client: thirdwebClient,
         chain: THIRDWEB_CHAIN,
-        address: USDC_ADDRESS,
+        address: paymentToken.address,
       }),
       method: "function approve(address spender, uint256 value) public returns (bool)",
       params: [SPLIT_IT_CONTRACT_ADDRESS, split.amountPerPerson],
     });
     return (
-      <TransactionButton
-        transaction={() => transaction}
-        unstyled
-        className="btn btn-primary btn-block"
-        onTransactionConfirmed={() => void refetch()}
-      >
-        {`Approve ${formattedAmount} USDC`}
-      </TransactionButton>
+      <div className="flex items-center w-full bg-primary rounded-lg">
+        <TransactionButton
+          transaction={() => transaction}
+          unstyled
+          className="btn btn-primary grow"
+          onTransactionConfirmed={() => void refetch()}
+        >
+          {`Approve ${maxDecimals(priceInToken, 2)} ${paymentToken.symbol}`}
+        </TransactionButton>
+        <TokenPicker 
+          id={`pay-eoa-picker`}
+          className="h-12 rounded-l-none pl-4"
+          onTokenSelected={setPaymentToken}
+          selectedToken={paymentToken}
+        />
+      </div>
     );
   }
 
@@ -72,14 +98,22 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
   });
 
   return address ? (
-    <TransactionButton
-      transaction={() => transaction}
-      unstyled
-      className="btn btn-primary btn-block"
-      onTransactionConfirmed={() => void onPaymentSuccessful()}
-    >
-      {`Pay ${formattedAmount} USDC`}
-    </TransactionButton> 
+    <div className="flex items-center w-full bg-primary rounded-lg">
+      <TransactionButton
+        transaction={() => transaction}
+        unstyled
+        className="btn btn-primary grow"
+        onTransactionConfirmed={() => void onPaymentSuccessful()}
+      >
+        {`Pay ${maxDecimals(priceInToken, 2)} ${paymentToken.symbol}`}
+      </TransactionButton>
+      <TokenPicker 
+        id={`pay-eoa-picker`}
+        className="h-12 rounded-l-none pl-4"
+        onTokenSelected={setPaymentToken}
+        selectedToken={paymentToken}
+      />
+    </div>
   ) : (
     <div className="w-full justify-center flex">
       <Wallet />

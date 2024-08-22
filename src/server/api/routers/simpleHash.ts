@@ -8,11 +8,11 @@ export const simpleHashRouter = createTRPCRouter({
   getTokenPrice: publicProcedure
     .input(z.object({ address: z.string().optional() }))
     .query(async ({ input }) => {
-      if (!input.address) {
-        return null;
-      }
+      const WETH = "0x4200000000000000000000000000000000000006";
+      const { address } = input;
+      const selectedAddress = !address || address === '' ? WETH : address;
       const url = new URL(`https://api.simplehash.com/api/v0/fungibles/assets`);
-      url.searchParams.set("fungible_ids", `base.${input.address}`);
+      url.searchParams.set("fungible_ids", `base.${selectedAddress}`);
       url.searchParams.set("include_prices", "1");
       const response = await fetch(url.toString(), {
         method: 'GET',

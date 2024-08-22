@@ -4,26 +4,18 @@ import { useReadContract, useAccount } from "wagmi";
 import { erc20Abi, formatUnits } from "viem";
 import { ZERO_ADDRESS } from "thirdweb";
 import { Portal } from "~/components/Portal";
+import { DEFAULT_TOKENS, ETH_TOKEN } from "~/constants/defaultTokens";
 
 type Props = {
   onTokenSelected: (token: Token) => void;
   selectedToken?: Token;
   id: string;
+  className?: string;
 }
 
-export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) => {
+export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id, className }) => {
   const { address } = useAccount();
-  const [tokenOptions, setTokenOptions] = useState<Token[]>([]);
-
-  const defaultToken = {
-    address: '',
-    chainId: 8453,
-    decimals: 18,
-    image:
-      'https://dynamic-assets.coinbase.com/dbb4b4983bde81309ddab83eb598358eb44375b930b94687ebe38bc22e52c3b2125258ffb8477a5ef22e33d6bd72e32a506c391caa13af64c00e46613c3e5806/asset_icons/4113b082d21cc5fab17fc8f2d19fb996165bcce635e6900f7fc2d57c4ef33ae9.png',
-    name: 'Ethereum',
-    symbol: 'ETH',
-  };
+  const [tokenOptions, setTokenOptions] = useState<Token[]>(DEFAULT_TOKENS);
 
   const handleChange = useCallback((q: string) => {
     async function getData(q: string) {
@@ -37,6 +29,12 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) =
     getData(q)
   }, []);
 
+  const handleSelectToken = (token: Token) => {
+    onTokenSelected(token);
+    // close modal
+    document.getElementById(`token-picker-modal-${id}`)?.click();
+  }
+
   const TokenOption: FC<{ token: Token }> = ({ token }) => {
     const { data: balance } = useReadContract({
       abi: erc20Abi,
@@ -48,11 +46,7 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) =
     return (
       <TokenRow 
         key={token.address}
-        onClick={() => {
-          onTokenSelected(token);
-          // close modal
-          document.getElementById(`token-picker-modal-${id}`)?.click();
-        }}
+        onClick={handleSelectToken}
         token={token} 
         amount={formatUnits(balance ?? BigInt(0), token.decimals)} 
         className="rounded-lg"
@@ -63,15 +57,25 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id }) =
   return (
     <>
       <label htmlFor={`token-picker-modal-${id}`} className="cursor-pointer">
-        <TokenChip token={selectedToken ?? defaultToken} className="pointer-events-none down-chevron" />
+        <TokenChip token={selectedToken ?? ETH_TOKEN} className={`pointer-events-none down-chevron shadow-none ${className}`} />
       </label>
 
       <Portal>
         <input type="checkbox" id={`token-picker-modal-${id}`} className="modal-toggle" />
         <div className="modal modal-bottom sm:modal-middle" role="dialog">
-          <div className="modal-box">
+          <div className="modal-box flex flex-col gap-2">
             <TokenSearch onChange={handleChange} delayMs={200} />
-            <div className="flex flex-col gap-2 mt-4 max-h-96 overflow-y-auto">
+            <div className="flex justify-between items-center gap-2 overflow-x-auto w-full">
+              {DEFAULT_TOKENS.map((token) => (
+                <TokenChip 
+                  token={token} 
+                  key={token.address} 
+                  onClick={handleSelectToken} 
+                  className="shadow-none"
+                />
+              ))}
+            </div>
+            <div className="flex flex-col gap-2 mt-4 overflow-y-auto max-h-96 min-h-80">
               {tokenOptions.map((token) => (
                 <TokenOption token={token} key={token.address} />
               ))}
