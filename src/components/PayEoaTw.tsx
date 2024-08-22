@@ -5,8 +5,8 @@ import { useAccount, useReadContract } from 'wagmi';
 import { sendTransaction, writeContract } from '@wagmi/core';
 
 import { Wallet } from '~/components/Wallet';
-import { AGGREGATOR_ADDRESS, CHAIN, MULTICALL, SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
-import { erc20Abi, isAddressEqual, parseUnits, encodeFunctionData, multicall3Abi } from 'viem';
+import { AGGREGATOR_ADDRESS, CHAIN, MULTICALL, SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, TRANSFER_BALANCE_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
+import { erc20Abi, isAddressEqual, parseUnits, encodeFunctionData } from 'viem';
 import { thirdwebClient, wagmiConfig } from '~/providers/OnchainProviders';
 import { type Split } from "~/types/split";
 import { formatAmount, Token } from "@coinbase/onchainkit/token";
@@ -15,6 +15,9 @@ import TokenPicker from "./TokenPicker";
 import { api } from "~/utils/api";
 import { maxDecimals } from "~/helpers/maxDecimals";
 import { splitItAbi } from "~/constants/abi/splitIt";
+import { multicallAbi } from "~/constants/abi/multicall";
+import { maxUint256 } from "thirdweb/utils";
+import { transferHelperAbi } from "~/constants/abi/transferHelper";
 
 type Props = {
   id: string;
@@ -36,9 +39,10 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
   const [priceInToken, setPriceInToken] = useState<string>('');
   useEffect(() => {
     if (paymentTokenPrice) {
-      const SLIPPAGE_TWO_AND_A_HALF_PERCENT = 1.025;
+      const TWO_AND_A_HALF_PERCENT = 1.025;
+      const SLIPPAGE = isAddressEqual(paymentToken.address, USDC_ADDRESS) ? 1 : TWO_AND_A_HALF_PERCENT;
       setPriceInToken(
-        ((Number(formattedAmount.replace('$', '')) / paymentTokenPrice) * SLIPPAGE_TWO_AND_A_HALF_PERCENT).toString(),
+        ((Number(formattedAmount.replace('$', '')) / paymentTokenPrice) * SLIPPAGE).toString(),
       )
     }
   }, [paymentTokenPrice, paymentToken, split.amountPerPerson]);
@@ -145,37 +149,63 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
         comment,
       ],
     });
+    const approveTransferHelperTx = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [TRANSFER_BALANCE_ADDRESS, maxUint256],
+    });
+    const refundExcessUsdcTx = encodeFunctionData({
+      abi: transferHelperAbi,
+      functionName: "transferAllBalance",
+      args: [paymentToken.address, address],
+    });
     console.log({ multicallConvertsTokensToUsdcTx });
     const multicallData = [
       {
         target: paymentToken.address,
         allowFailure: false,
         callData: userTransfersTokensToMulticallTx,
+        value: BigInt(0),
       },
       {
         target: paymentToken.address,
         allowFailure: false,
         callData: multicallApprovesAggregatorTx,
+        value: BigInt(0),
       },
       {
         target: AGGREGATOR_ADDRESS,
         allowFailure: true,
-        callData: multicallConvertsTokensToUsdcTx.data.data as `0x${string}`,
+        callData: multicallConvertsTokensToUsdcTx.data.data as `0x${string}`,        value: BigInt(0),
       },
       {
         target: USDC_ADDRESS,
         allowFailure: false,
         callData: multicallApprovesSplitItTx,
+        value: BigInt(0),
       },
       {
         target: SPLIT_IT_CONTRACT_ADDRESS,
         allowFailure: false,
         callData: splitItPayTx,
+        value: BigInt(0),
       },
+      {
+        target: USDC_ADDRESS,
+        allowFailure: false,
+        callData: approveTransferHelperTx,
+        value: BigInt(0),
+      },
+      // {
+      //   target: TRANSFER_BALANCE_ADDRESS,
+      //   allowFailure: false,
+      //   callData: refundExcessUsdcTx,
+      //   value: BigInt(0),
+      // },
     ];
     const encodedMulticall = encodeFunctionData({
-      abi: multicall3Abi,
-      functionName: "aggregate3",
+      abi: multicallAbi,
+      functionName: "aggregate3Value",
       args: [multicallData],
     });
     // console.log({ encodedMulticall });

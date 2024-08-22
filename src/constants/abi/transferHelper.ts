@@ -1,0 +1,1 @@
+export const transferHelperAbi = [{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"address","name":"to","type":"address"}],"name":"transferAllBalance","outputs":[],"stateMutability":"nonpayable","type":"function"}] as const;

@@ -1,13 +1,18 @@
 import { z } from "zod";
+import { USDC_ADDRESS } from "~/constants";
 import { env } from "~/env";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { TokenPriceResponse } from "~/types/simpleHash";
+import { isAddressEqual } from "viem";
 
 export const simpleHashRouter = createTRPCRouter({
   getTokenPrice: publicProcedure
     .input(z.object({ address: z.string().optional() }))
     .query(async ({ input }) => {
+      if (isAddressEqual(input.address ?? USDC_ADDRESS, USDC_ADDRESS)) {
+        return 1;
+      }
       const WETH = "0x4200000000000000000000000000000000000006";
       const { address } = input;
       const selectedAddress = !address || address === '' ? WETH : address;
