@@ -1,6 +1,6 @@
 import { type FC,useMemo } from "react";
 import { getContract, prepareContractCall } from 'thirdweb';
-import { TransactionButton, useActiveAccount } from 'thirdweb/react';
+import { TransactionButton } from 'thirdweb/react';
 import { useAccount, useReadContract } from 'wagmi';
 
 import { Wallet } from '~/components/Wallet';
@@ -20,7 +20,6 @@ type Props = {
 
 export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, onPaymentSuccessful }) => {
   const { address } = useAccount();
-  const account = useActiveAccount();
 
   const { data: allowance, refetch } = useReadContract({
     abi: erc20Abi,

@@ -21,6 +21,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RPC_URL_SEPOLIA: z.string(),
     NEXT_PUBLIC_RPC_URL: z.string(),
     NEXT_PUBLIC_CHAIN_ID: z.string(),
+    NEXT_PUBLIC_ONCHAINKIT_API_KEY: z.string(),
   },
 
   /**
@@ -34,6 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RPC_URL_SEPOLIA: process.env.NEXT_PUBLIC_RPC_URL_SEPOLIA,
     NEXT_PUBLIC_RPC_URL: process.env.NEXT_PUBLIC_RPC_URL,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
+    NEXT_PUBLIC_ONCHAINKIT_API_KEY: process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

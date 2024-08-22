@@ -5,6 +5,7 @@ import { formatUnits } from "viem";
 import { useAccount, useReadContract } from 'wagmi';
 
 import Pay from "~/components/Pay";
+import PayAnyCrypto from "~/components/PayAnyCrypto";
 import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
@@ -146,6 +147,14 @@ export const Split: NextPage<Props> = ({ id }) => {
               onPaymentSuccessful={() => void refetch()}
             />
           )}
+          <PayAnyCrypto 
+            split={split} 
+            id={id}  
+            formattedAmount={formattedAmount} 
+            name={name}
+            comment={comment}
+            onPaymentSuccessful={() => void refetch()}
+          />
         </div>
       )}
       <div className="divider" />

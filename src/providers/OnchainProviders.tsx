@@ -78,7 +78,7 @@ function OnchainProviders({ children }: Props) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <OnchainKitProvider
-          apiKey={process.env.PUBLIC_ONCHAINKIT_API_KEY}
+          apiKey={env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
           chain={CHAIN}
         >
           <RainbowKitProvider modalSize="compact">
