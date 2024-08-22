@@ -22,3 +22,5 @@ export const USDC_COLOR = "#2671C4";
 export const MULTICALL: `0x${string}` = "0xcA11bde05977b3631167028862bE2a173976CA11"; // same address for mainnet and testnet base
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+export const AGGREGATOR_ADDRESS = "0x6131B5fae19EA4f9D964eAc0408E4408b66337b5"; // kyberswap
