@@ -1,7 +1,7 @@
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
 import { type GetServerSideProps, type NextPage } from "next";
-import { useState } from "react";
-import { formatUnits } from "viem";
+import { useEffect, useMemo, useState } from "react";
+import { formatUnits, isAddressEqual } from "viem";
 import { useAccount, useReadContract } from 'wagmi';
 
 import Pay from "~/components/Pay";
@@ -14,7 +14,8 @@ import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
 import { transformSplit } from "~/helpers/transformSplit";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
-import { type Payment, type Split as SplitT } from "~/types/split";
+import { type Payment } from "~/types/split";
+import SuccessfulPayment from "~/components/SuccessfulPayment";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.params?.id as string;
@@ -46,6 +47,14 @@ export const Split: NextPage<Props> = ({ id }) => {
     args: [BigInt(id)],
   });
 
+  const splitIsFullyPaid = useMemo(() => {
+    if (!payments) return false;
+    // count the number of payments, multiply it by the amount per person
+    // if that number is equal to the total amount, then the split is paid
+    const totalPaid = BigInt(payments.length) * split.amountPerPerson;
+    return totalPaid >= split.totalAmount;
+  }, [payments, split]);
+
   const refetchAndPopNotification = () => {
     void refetchSplit();
     void refetchPayments();
@@ -63,6 +72,18 @@ export const Split: NextPage<Props> = ({ id }) => {
   const [showInputs, setShowInputs] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
   const [comment, setComment] = useState<string>('');
+
+  const [showPayButton, setShowPayButton] = useState<boolean>(true);
+  const userHasPaid = useMemo(() => {
+    if (!address || !payments) return false;
+    return payments.some((payment) => isAddressEqual(payment.payer, address));
+  }, [payments, address]);
+
+  useEffect(() => {
+    if (userHasPaid && showPayButton) {
+      setShowPayButton(false);
+    }
+  }, [userHasPaid]);
   
   return (
     <div className="flex flex-col gap-1 mt-4">
@@ -89,13 +110,23 @@ export const Split: NextPage<Props> = ({ id }) => {
       {split.billName && (
         <div className="text-center text-sm">for {split.billName}</div>
       )}
+      {splitIsFullyPaid && (
+        <div className="badge badge-success mx-auto">fully paid</div>
+      )}
       <div className="my-2" />
-      <button
-        className={`btn btn-primary ${showInputs || !address ? 'hidden' : ''}`}
-        onClick={() => setShowInputs(true)}
-      >
-        {`Pay ${formattedAmount}`}
-      </button>
+      {showPayButton && (
+        <button
+          className={`btn btn-primary ${showInputs || !address ? 'hidden' : ''}`}
+          onClick={() => setShowInputs(true)}
+        >
+          {`Pay ${formattedAmount}`}
+        </button>
+      )}
+      <SuccessfulPayment 
+        onPayAgain={() => setShowPayButton(true)}
+        splitIsFullyPaid={splitIsFullyPaid}
+        hide={showPayButton}
+      />
       {showInputs && (
         <div className="my-2">
           <label className="form-control w-full">

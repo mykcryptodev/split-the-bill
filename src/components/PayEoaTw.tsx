@@ -83,7 +83,10 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
           transaction={() => transaction}
           unstyled
           className="btn btn-primary grow"
-          onTransactionConfirmed={() => void refetch()}
+          onTransactionConfirmed={() => {
+            void refetch();
+            enqueueSnackbar(`Approval successful`, { variant: 'success' });
+          }}
           onError={(error) => {
             console.log({ error });
             const e = error as unknown as { cause: { shortMessage: string } };
@@ -225,8 +228,7 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
         onTransactionConfirmed={() => void onPaymentSuccessful()}
         onError={(error) => {
           console.log({ error });
-          const e = error as unknown as { cause: { shortMessage: string } };
-          enqueueSnackbar(e.cause.shortMessage, { variant: 'error' });
+          enqueueSnackbar(error.message.split('\n')[0], { variant: 'error' });
         }}
       >
         {`Pay ${maxDecimals(priceInToken, 2)} ${paymentToken.symbol}`}
