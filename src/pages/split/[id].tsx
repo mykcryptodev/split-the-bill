@@ -6,6 +6,7 @@ import { useAccount, useReadContract } from 'wagmi';
 
 import Pay from "~/components/Pay";
 import PayAnyCrypto from "~/components/PayAnyCrypto";
+import { useSnackbar } from 'notistack';
 import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
@@ -29,6 +30,7 @@ type Props = {
 }
 
 export const Split: NextPage<Props> = ({ id }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const { data, refetch: refetchSplit } = useReadContract({
     abi: splitItAbi,
     address: SPLIT_IT_CONTRACT_ADDRESS,
@@ -44,9 +46,10 @@ export const Split: NextPage<Props> = ({ id }) => {
     args: [BigInt(id)],
   });
 
-  const refetch = () => {
+  const refetchAndPopNotification = () => {
     void refetchSplit();
     void refetchPayments();
+    enqueueSnackbar('Payment successful', { variant: 'success' });
   }
 
   const { address } = useAccount();
@@ -135,7 +138,7 @@ export const Split: NextPage<Props> = ({ id }) => {
               formattedAmount={formattedAmount}
               name={name}
               comment={comment}
-              onPaymentSuccessful={() => void refetch()}
+              onPaymentSuccessful={() => void refetchAndPopNotification()}
             />
           ) : (
             <PayEoa 
@@ -144,7 +147,7 @@ export const Split: NextPage<Props> = ({ id }) => {
               formattedAmount={formattedAmount} 
               name={name}
               comment={comment}
-              onPaymentSuccessful={() => void refetch()}
+              onPaymentSuccessful={() => void refetchAndPopNotification()}
             />
           )}
           {/* <PayAnyCrypto 

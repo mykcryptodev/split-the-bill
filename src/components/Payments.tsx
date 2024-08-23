@@ -11,8 +11,8 @@ export const Payments: FC<Props> = ({ payments }) => {
     <div className="flex flex-col gap-2">
       <h1 className="font-bold text-xl mb-2">Payments</h1>
       <div className="flex flex-col gap-2">
-        {payments?.map((payment) => (
-          <div key={payment.payer} className="flex gap-4">
+        {payments?.map((payment, i) => (
+          <div key={`${payment.payer}-${i}`} className="flex gap-4">
             <div className="flex items-start gap-1">
               <Avatar
                 address={payment.payer}
