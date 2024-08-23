@@ -15,7 +15,7 @@ export default function Home() {
       <main className="flex flex-col items-center justify-center">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Split <span className="text-primary">The</span> Bill
+            Split <span className="text-primary">the</span> Bill
           </h1>
           <div className="flex sm:flex-row flex-col items-start gap-4 md:gap-8">
             <Link

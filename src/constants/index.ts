@@ -4,7 +4,7 @@ import { env } from "~/env";
 
 const isBaseMainnet = ({ chainId }: { chainId: number }) => chainId === base.id;
 
-export const APP_NAME = "Split The Bill";
+export const APP_NAME = "Bill Split";
 export const CHAIN = isBaseMainnet({ chainId: Number(env.NEXT_PUBLIC_CHAIN_ID) }) ? base : baseSepolia;
 
 

@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { useSnackbar } from 'notistack';
 import { QRCode } from 'react-qrcode-logo';
-import { USDC_COLOR, USDC_IMAGE } from "~/constants";
+import { APP_NAME, USDC_COLOR, USDC_IMAGE } from "~/constants";
 import { Split } from "~/types/split";
 
 const QRCodeModal: FC<{ formattedAmount: string; split: Split; splitId: string; }> = ({ formattedAmount, split, splitId }) => {
@@ -57,7 +57,7 @@ export const Share: FC<Props> = ({ splitId, split, formattedAmount }) => {
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({
-        title: 'Split The Bill',
+        title: APP_NAME,
         text: `Here is the link for splitting the bill. It came out to ${formattedAmount} USDC each.`,
         url: window.location.href,
       });

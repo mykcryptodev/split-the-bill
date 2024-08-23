@@ -4,6 +4,7 @@ import { Wallet } from "~/components/Wallet";
 import { useAccount } from "wagmi";
 import Image from "next/image";
 import Link from "next/link";
+import { APP_NAME } from "~/constants";
 
 type Props = {
   children: ReactNode;
@@ -19,8 +20,8 @@ export const Layout: FC<Props> = ({ children }) => {
           <div className="flex items-center justify-between w-full max-w-7xl mx-auto my-4 mb-20">
             <Link href="/">
               <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Image src="/images/icon.png" width={48} height={48} alt="Split The Bill Logo" />
-                <span className="sm:flex hidden">Split The Bill</span>
+                <Image src="/images/icon.png" width={48} height={48} alt={`${APP_NAME} Logo`} />
+                <span className="sm:flex hidden">{APP_NAME}</span>
               </h1>
             </Link>
             <div className="flex items-center gap-2">

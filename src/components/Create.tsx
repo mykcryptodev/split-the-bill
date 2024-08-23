@@ -55,7 +55,7 @@ const CreateSplit: FC<Props> = ({
       contracts={contracts}
       onSuccess={() => onSplitCreated()}
     >
-      <TransactionButton text="Split The Bill" disabled={isDisabled} />
+      <TransactionButton text={`Create Bill Split`} disabled={isDisabled} />
       <TransactionSponsor />
       <TransactionStatus>
         <TransactionStatusLabel />

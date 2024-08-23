@@ -51,7 +51,7 @@ const CreateSplitEoaTw: FC<Props> = ({
       className="btn btn-primary btn-block"
       onTransactionConfirmed={() => onSplitCreated()}
     >
-      Split The Bill
+      Create Bill Split
     </TransactionButton>
   ) : (
     <div className="w-full justify-center flex">
