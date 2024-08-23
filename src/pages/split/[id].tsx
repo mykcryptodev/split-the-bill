@@ -160,7 +160,7 @@ export const Split: NextPage<Props> = ({ id }) => {
           /> */}
         </div>
       )}
-      <div className="divider" />
+      <div className="my-2" />
       <Payments payments={payments as Payment[] | undefined} />
     </div>
   );
