@@ -1,7 +1,7 @@
 import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
 import { Split } from "~/types/split";
 
-type Data = readonly [string, string, string, bigint, bigint, bigint] | undefined;
+type Data = readonly [string, string, string, bigint, bigint, bigint, bigint] | undefined;
 
 export const transformSplit = (data: Data) => {
   const split: Split = {
@@ -11,6 +11,7 @@ export const transformSplit = (data: Data) => {
     totalAmount: BigInt(data?.[3] ?? 0),
     amountPerPerson: BigInt(data?.[4] ?? 0),
     totalPaid: BigInt(data?.[5] ?? 0),
+    timestamp: BigInt(data?.[6] ?? 0),
   };
   return split;
 }
