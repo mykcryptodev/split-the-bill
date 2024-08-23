@@ -17,6 +17,7 @@ contract SplitIt {
         address payer; // address of the payer
         string name; // name of the payer
         string comment; // comment from the payer
+        uint256 timestamp; // timestamp of the payment
     }
     
     // a structure to represent a bill
@@ -27,6 +28,7 @@ contract SplitIt {
         uint256 totalAmount; // Total amount of the bill
         uint256 amountPerPerson; // Amount each person needs to pay
         uint256 totalPaid; // Total amount paid so far
+        uint256 timestamp; // Timestamp of the creation
     }
 
     // mapping of split IDs to their corresponding split struct
@@ -55,7 +57,14 @@ contract SplitIt {
     );
 
     // event to emit when a participant pays their share of the bill
-    event Paid(uint256 indexed splitId, address indexed participant, uint256 amount);
+    event Paid(
+        uint256 indexed splitId, 
+        address indexed participant, 
+        uint256 amount,
+        string comment,
+        string name,
+        uint256 timestamp
+    );
 
     /**
      * @dev Constructor to initialize the USDC token contract address
@@ -89,7 +98,8 @@ contract SplitIt {
             _billName,
             _totalAmount, 
             _amountPerPerson, 
-            0
+            0,
+            block.timestamp
         );
         splits[splitCounter] = split;
 
@@ -123,14 +133,21 @@ contract SplitIt {
         split.totalPaid += amount;
 
         // create a payment struct and add it to the payments mapping
-        Payment memory payment = Payment(_address, _name, _comment);
+        Payment memory payment = Payment(_address, _name, _comment, block.timestamp);
         payments[_splitId].push(payment);
 
         usdc.safeTransferFrom(_fundedFrom, split.creator, amount);
 
         paymentsByAddress[_address].push(_splitId);
 
-        emit Paid(_splitId, _address, amount);
+        emit Paid(
+            _splitId, 
+            _address, 
+            amount,
+            _comment,
+            _name,
+            block.timestamp
+        );
     }
 
     /**
@@ -166,4 +183,11 @@ contract SplitIt {
         return payments[_splitId];
     }
 
+    /**
+     * @dev Determines if the split has been paid in full.
+     */
+    function isSplitPaid(uint256 _splitId) public view returns (bool) {
+        Split memory split = splits[_splitId];
+        return split.totalPaid >= split.totalAmount;
+    }
 }

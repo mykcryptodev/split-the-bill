@@ -12,7 +12,7 @@ export const THIRDWEB_CHAIN = isBaseMainnet({ chainId: CHAIN.id }) ? twBase : tw
 
 export const CHAIN_RPC = isBaseMainnet({ chainId: CHAIN.id }) ? env.NEXT_PUBLIC_RPC_URL : env.NEXT_PUBLIC_RPC_URL_SEPOLIA;
 
-export const SPLIT_IT_CONTRACT_ADDRESS: `0x${string}` = isBaseMainnet({ chainId: CHAIN.id }) ? "0xD38B207576Fe5C027354280F1D6D210a6f6D166e" : "0x231a651Fc448ac56d80a2e7685591af5dcE8A691";
+export const SPLIT_IT_CONTRACT_ADDRESS: `0x${string}` = isBaseMainnet({ chainId: CHAIN.id }) ? "0xA5dFbdDe359946a1C91B58185ad618D23920B587" : "0xd87565CA95BFfB2a8cf756c2EA7b1D563F2F012A";
 
 export const USDC_ADDRESS: `0x${string}` = isBaseMainnet({ chainId: CHAIN.id }) ? "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" : "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 export const USDC_DECIMALS = 6;

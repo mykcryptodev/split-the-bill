@@ -62,10 +62,15 @@ export const Payments: FC<Props> = ({ payments }) => {
                       <DisplayedName payment={payment} className="text-xs font-medium" />
                     </div>
                     <time
-                      dateTime={new Date().getTime().toString()}
+                      dateTime={new Date(Number(payment.timestamp) * 1000).getTime().toString()}
                       className="flex-none py-0.5 text-xs leading-5 opacity-50"
                     >
-                      {new Date().toLocaleDateString()}
+                      {new Date(Number(payment.timestamp) * 1000).toLocaleDateString([], {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                      })}
                     </time>
                   </div>
                   <p className="text-sm leading-6 text-gray-500">{payment.comment}</p>
@@ -82,10 +87,15 @@ export const Payments: FC<Props> = ({ payments }) => {
                   <span className="opacity-50">paid the split</span>
                 </p>
                 <time
-                  dateTime={new Date().getTime().toString()}
+                  dateTime={new Date(Number(payment.timestamp) * 1000).getTime().toString()}
                   className="flex-none py-0.5 text-xs leading-5 opacity-50"
                 >
-                  {new Date().toLocaleDateString()}
+                  {new Date(Number(payment.timestamp) * 1000).toLocaleDateString([], {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })}
                 </time>
               </>
             )}
