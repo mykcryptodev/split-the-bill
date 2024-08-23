@@ -64,6 +64,7 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id, cla
         <input type="checkbox" id={`token-picker-modal-${id}`} className="modal-toggle" />
         <div className="modal modal-bottom sm:modal-middle" role="dialog">
           <div className="modal-box flex flex-col gap-2">
+            <h3 className="text-lg font-bold">Select a token</h3>
             <TokenSearch onChange={handleChange} delayMs={200} />
             <div className="flex justify-between items-center gap-2 overflow-x-auto w-full">
               {DEFAULT_TOKENS.map((token) => (
