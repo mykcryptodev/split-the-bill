@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { useSnackbar } from 'notistack';
 import { QRCode } from 'react-qrcode-logo';
-import { SPLIT_IT_CONTRACT_ADDRESS, USDC_COLOR, USDC_IMAGE } from "~/constants";
+import { USDC_COLOR, USDC_IMAGE } from "~/constants";
 import { Split } from "~/types/split";
 
 const QRCodeModal: FC<{ formattedAmount: string; split: Split; splitId: string; }> = ({ formattedAmount, split, splitId }) => {
@@ -53,7 +53,7 @@ type Props = {
 }
 
 export const Share: FC<Props> = ({ splitId, split, formattedAmount }) => {
-  const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar();
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({
