@@ -2,7 +2,7 @@ import { type FC,useEffect,useMemo, useState } from "react";
 import { getContract, prepareContractCall } from 'thirdweb';
 import { TransactionButton } from 'thirdweb/react';
 import { useAccount, useReadContract } from 'wagmi';
-import { sendTransaction, writeContract } from '@wagmi/core';
+import { sendTransaction } from '@wagmi/core';
 
 import { Wallet } from '~/components/Wallet';
 import { AGGREGATOR_ADDRESS, CHAIN, MULTICALL, SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, TRANSFER_BALANCE_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
@@ -98,22 +98,6 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
     );
   }
 
-  const transaction = prepareContractCall({
-    contract: getContract({
-      client: thirdwebClient,
-      chain: THIRDWEB_CHAIN,
-      address: SPLIT_IT_CONTRACT_ADDRESS,
-    }),
-    method: "function pay(uint256 _splitId, address _address, address _fundedFrom, string memory _name, string memory _comment)",
-    params: [
-      BigInt(id),
-      address ?? ZERO_ADDRESS,
-      address ?? ZERO_ADDRESS,
-      name,
-      comment,
-    ],
-  });
-
   const handleSendTransaction = async () => {
     if (!address) return;
     const userTransfersTokensToMulticallTx = encodeFunctionData({
@@ -157,7 +141,7 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
     const refundExcessUsdcTx = encodeFunctionData({
       abi: transferHelperAbi,
       functionName: "transferAllBalance",
-      args: [paymentToken.address, address],
+      args: [USDC_ADDRESS, address],
     });
     console.log({ multicallConvertsTokensToUsdcTx });
     const multicallData = [
@@ -196,105 +180,28 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
         callData: approveTransferHelperTx,
         value: BigInt(0),
       },
-      // {
-      //   target: TRANSFER_BALANCE_ADDRESS,
-      //   allowFailure: false,
-      //   callData: refundExcessUsdcTx,
-      //   value: BigInt(0),
-      // },
+      {
+        target: TRANSFER_BALANCE_ADDRESS,
+        allowFailure: false,
+        callData: refundExcessUsdcTx,
+        value: BigInt(0),
+      },
     ];
     const encodedMulticall = encodeFunctionData({
       abi: multicallAbi,
       functionName: "aggregate3Value",
       args: [multicallData],
     });
-    // console.log({ encodedMulticall });
     const result = await sendTransaction(wagmiConfig, {
       to: MULTICALL,
       data: encodedMulticall,
       value: BigInt(0),
     });
-    // const result = await writeContract(wagmiConfig, {
-    //   abi: multicall3Abi,
-    //   address: MULTICALL,
-    //   functionName: "aggregate3",
-    //   args: [multicallData],
-    // });
-    // const result = await sendTransaction(wagmiConfig, {
-    //   to: AGGREGATOR_ADDRESS,
-    //   data: conversionTransaction.data.data as `0x${string}`,
-    //   value: BigInt(0),
-    // });
     console.log({ result });
   }
 
   return address ? (
     <div className="flex items-center w-full bg-primary rounded-lg">
-      {/* <TransactionButton
-        transaction={async () => {
-          // return {
-          //   to: MULTICALL,
-          //   data: encodedMulticall,
-          //   value: 0,
-          // }
-          const conversionTransaction = await getConversionEncodedData({
-            from: address,
-            to: MULTICALL,
-            chainId: CHAIN.id,
-            paymentToken: paymentToken.address,
-            paymentAmount: parseUnits(priceInToken, paymentToken.decimals).toString(),
-          });
-          const multicallData = [
-            {
-              target: AGGREGATOR_ADDRESS,
-              allowFailure: false,
-              callData: conversionTransaction.data.data as `0x${string}`,
-            },
-            {
-              target: USDC_ADDRESS,
-              allowFailure: false,
-              callData: encodeFunctionData({
-                abi: erc20Abi,
-                functionName: "approve",
-                args: [SPLIT_IT_CONTRACT_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
-              }),
-            },
-            {
-              target: SPLIT_IT_CONTRACT_ADDRESS,
-              allowFailure: false,
-              callData: encodeFunctionData({
-                abi: splitItAbi,
-                functionName: "pay",
-                args: [
-                  BigInt(id),
-                  address,
-                  MULTICALL,
-                  name,
-                  comment,
-                ],
-              }),
-            }
-          ];
-          const multicall = prepareContractCall({
-            contract: getContract({
-              client: thirdwebClient,
-              chain: THIRDWEB_CHAIN,
-              address: MULTICALL,
-            }),
-            method: "function aggregate3(bytes[] calls)",
-            params: [multicallData],
-          });
-          console.log({ multicallData, multicall });
-          return multicall;
-          // return transaction;
-        }}
-        unstyled
-        className="btn btn-primary grow"
-        onError={(error) => console.error({ error })}
-        onTransactionConfirmed={() => void onPaymentSuccessful()}
-      >
-        {`Pay ${maxDecimals(priceInToken, 2)} ${paymentToken.symbol}`}
-      </TransactionButton> */}
       <button
         onClick={handleSendTransaction}
         className="btn btn-primary grow"
