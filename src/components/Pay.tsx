@@ -8,6 +8,7 @@ import {
 } from '@coinbase/onchainkit/transaction';
 import { useEffect, useState, type FC } from "react";
 import { useAccount } from 'wagmi';
+import { useSendCalls } from 'wagmi/experimental'
 
 import { Wallet } from '~/components/Wallet';
 import { AGGREGATOR_ADDRESS, CHAIN, MULTICALL, SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, TRANSFER_BALANCE_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
@@ -38,6 +39,7 @@ type Props = {
 
 export const Pay: FC<Props> = ({ split, id, formattedAmount, name, comment, onPaymentSuccessful }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const { sendCalls } = useSendCalls();
   const { address } = useAccount();
   const [paymentToken, setPaymentToken] = useState<Token>(USDC_TOKEN);
   const [priceInToken, setPriceInToken] = useState<string>('');
@@ -56,137 +58,103 @@ export const Pay: FC<Props> = ({ split, id, formattedAmount, name, comment, onPa
     }
   }, [paymentTokenPrice, paymentToken, split.amountPerPerson]);
 
-  const getPaySplitTx = async () => {
-    let addr = address ?? ZERO_ADDRESS;
-    if (paymentToken.address === USDC_ADDRESS) {
-      return prepareContractCall({
-        contract: getContract({
-          client: thirdwebClient,
-          chain: THIRDWEB_CHAIN,
-          address: SPLIT_IT_CONTRACT_ADDRESS,
-        }),
-        method: "function pay(uint256 _splitId, address _address, address _fundedFrom, string memory _name, string memory _comment) external",
-        params: [BigInt(id), addr, addr, name, comment],
+  const [isPaymentLoading, setIsPaymentLoading] = useState<boolean>(false);
+
+  const payWithAnyCrypto = async () => {
+    if (!address) return;
+    setIsPaymentLoading(true);
+    try {
+      const converTokensToUsdcTx = await getConversionEncodedData({
+        from: address,
+        to: address,
+        chainId: CHAIN.id,
+        paymentToken: paymentToken.address,
+        paymentAmount: parseUnits(priceInToken, paymentToken.decimals).toString(),
       });
-    };
-    const userTransfersTokensToMulticallTx = encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "transferFrom",
-      args: [addr, MULTICALL, parseUnits(priceInToken, paymentToken.decimals)],
-    });
-    const multicallApprovesAggregatorTx = encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [AGGREGATOR_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
-    });
-    const multicallConvertsTokensToUsdcTx = await getConversionEncodedData({
-      from: MULTICALL,
-      to: MULTICALL,
-      chainId: CHAIN.id,
-      paymentToken: paymentToken.address,
-      paymentAmount: parseUnits(priceInToken, paymentToken.decimals).toString(),
-    });
-    const multicallApprovesSplitItTx = encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [SPLIT_IT_CONTRACT_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
-    });
-    const splitItPayTx = encodeFunctionData({
-      abi: splitItAbi,
-      functionName: "pay",
-      args: [
-        BigInt(id),
-        addr,
-        MULTICALL,
-        name,
-        comment,
-      ],
-    });
-    const approveTransferHelperTx = encodeFunctionData({
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [TRANSFER_BALANCE_ADDRESS, maxUint256],
-    });
-    const refundExcessUsdcTx = encodeFunctionData({
-      abi: transferHelperAbi,
-      functionName: "transferAllBalance",
-      args: [USDC_ADDRESS, addr],
-    });
-    const multicallData = [
-      {
-        target: paymentToken.address,
-        allowFailure: false,
-        callData: userTransfersTokensToMulticallTx,
-        value: BigInt(0),
-      },
-      {
-        target: paymentToken.address,
-        allowFailure: false,
-        callData: multicallApprovesAggregatorTx,
-        value: BigInt(0),
-      },
-      {
-        target: AGGREGATOR_ADDRESS,
-        allowFailure: true,
-        callData: multicallConvertsTokensToUsdcTx.data.data as `0x${string}`,        value: BigInt(0),
-      },
-      {
-        target: USDC_ADDRESS,
-        allowFailure: false,
-        callData: multicallApprovesSplitItTx,
-        value: BigInt(0),
-      },
-      {
-        target: SPLIT_IT_CONTRACT_ADDRESS,
-        allowFailure: false,
-        callData: splitItPayTx,
-        value: BigInt(0),
-      },
-      {
-        target: USDC_ADDRESS,
-        allowFailure: false,
-        callData: approveTransferHelperTx,
-        value: BigInt(0),
-      },
-      {
-        target: TRANSFER_BALANCE_ADDRESS,
-        allowFailure: false,
-        callData: refundExcessUsdcTx,
-        value: BigInt(0),
-      },
-    ];
-    const encodedMulticall = encodeFunctionData({
-      abi: multicallAbi,
-      functionName: "aggregate3Value",
-      args: [multicallData],
-    });
-    return prepareTransaction({
-      to: MULTICALL,
-      chain: THIRDWEB_CHAIN,
-      client: thirdwebClient,
-      data: encodedMulticall,
-      value: BigInt(0),
-    });
+      const calls = [
+        {
+          to: paymentToken.address as `0x${string}`,
+          data: encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [AGGREGATOR_ADDRESS, parseUnits(priceInToken, paymentToken.decimals)],
+          }),
+          value: BigInt(0),
+        },
+        {
+          to: AGGREGATOR_ADDRESS as `0x${string}`,
+          data: converTokensToUsdcTx.data.data as `0x${string}`,
+          value: BigInt(0),
+        },
+        {
+          to: USDC_ADDRESS,
+          data: encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [SPLIT_IT_CONTRACT_ADDRESS, split.amountPerPerson],
+          }),
+        },
+        {
+          to: SPLIT_IT_CONTRACT_ADDRESS,
+          data: encodeFunctionData({
+            abi: splitItAbi,
+            functionName: 'pay',
+            args: [
+              BigInt(id),
+              address,
+              address,
+              name,
+              comment,
+            ],
+          }),
+          value: BigInt(0),
+        },
+      ];
+      sendCalls({
+        calls,
+        capabilities: {
+          auxiliaryFunds: {
+            supported: true
+          },
+          paymasterService: {
+            url: `https://${CHAIN.id}.bundler.thirdweb.com/${thirdwebClient.clientId}`
+          }
+        }
+      }, {
+        onSuccess() {
+          void onPaymentSuccessful();
+        },
+        onError(error) {
+          enqueueSnackbar(error.message, { variant: 'error' });
+        },
+        onSettled() {
+          setIsPaymentLoading(false);
+        }
+      });
+    } catch (e) {
+      const error = e as Error;
+      enqueueSnackbar(error.message, { variant: 'error' });
+      setIsPaymentLoading(false);
+    }
   }
 
   if (address && !isAddressEqual(paymentToken.address, USDC_ADDRESS)) {
     return (
       <div className="flex items-center w-full rounded-lg gap-2">
-        <TransactionButtonTw
-          transaction={async () =>  await getPaySplitTx()}
-          unstyled
+        <button
+          onClick={payWithAnyCrypto}
+          disabled={isPaymentLoading}
           className="btn btn-primary grow"
-          onTransactionConfirmed={() => void onPaymentSuccessful()}
-          onError={(error) => {
-            console.log({ error });
-            enqueueSnackbar(error.message.split('\n')[0], { variant: 'error' });
-          }}
         >
-          {`Pay ${maxDecimals(priceInToken, 2)} ${paymentToken.symbol}`}
-        </TransactionButtonTw>
+          {isPaymentLoading ? (
+            <div className="loading-spinner loading" />
+          ) : (
+            `Pay ${maxDecimals(priceInToken, 2)} ${paymentToken.symbol}`
+          )}
+        </button>
         <TokenPicker 
           id={`pay-sw-picker`}
-          className="h-full min-h-12"
+          className="h-full min-h-12 pl-4"
           onTokenSelected={setPaymentToken}
           selectedToken={paymentToken}
         />

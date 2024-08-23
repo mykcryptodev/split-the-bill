@@ -55,12 +55,6 @@ export const Split: NextPage<Props> = ({ id }) => {
     return totalPaid >= split.totalAmount;
   }, [payments, split]);
 
-  const refetchAndPopNotification = () => {
-    void refetchSplit();
-    void refetchPayments();
-    enqueueSnackbar('Payment successful', { variant: 'success' });
-  }
-
   const { address } = useAccount();
   const isSmartWallet = useIsSmartWallet();
 
@@ -74,9 +68,12 @@ export const Split: NextPage<Props> = ({ id }) => {
   const [comment, setComment] = useState<string>('');
 
   const [showPayButton, setShowPayButton] = useState<boolean>(true);
-  const userHasPaid = useMemo(() => {
-    if (!address || !payments) return false;
-    return payments.some((payment) => isAddressEqual(payment.payer, address));
+  const [userHasPaid, setUserHasPaid] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!address || !payments) return;
+    const hasPaid = payments.some((payment) => isAddressEqual(payment.payer, address));
+    setUserHasPaid(hasPaid);
   }, [payments, address]);
 
   useEffect(() => {
@@ -84,6 +81,19 @@ export const Split: NextPage<Props> = ({ id }) => {
       setShowPayButton(false);
     }
   }, [userHasPaid]);
+
+  const refetchAndPopNotification = () => {
+    setUserHasPaid(true);
+    setShowPayButton(false);
+    setShowInputs(false);
+    enqueueSnackbar('Payment successful', { variant: 'success' });
+    // wait 5s for the transaction index and refetch
+    setTimeout(() => {
+      console.log('refetching...');
+      void refetchSplit();
+      void refetchPayments();
+    }, 5000);
+  }
   
   return (
     <div className="flex flex-col gap-1 mt-4">
