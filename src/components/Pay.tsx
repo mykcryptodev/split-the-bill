@@ -11,7 +11,7 @@ import { useAccount } from 'wagmi';
 import { useSendCalls } from 'wagmi/experimental'
 
 import { Wallet } from '~/components/Wallet';
-import { AGGREGATOR_ADDRESS, CHAIN, MULTICALL, SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, TRANSFER_BALANCE_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
+import { AGGREGATOR_ADDRESS, CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_ADDRESS } from '~/constants';
 import { erc20Abi, isAddressEqual, parseUnits, encodeFunctionData } from 'viem';
 import { splitItAbi } from '~/constants/abi/splitIt';
 import { type Split } from "~/types/split";
@@ -19,13 +19,8 @@ import { Token } from '@coinbase/onchainkit/token';
 import { USDC_TOKEN } from '~/constants/defaultTokens';
 import { api } from '~/utils/api';
 import { useSnackbar } from 'notistack';
-import { maxUint256 } from 'thirdweb/utils';
-import { TransactionButton as TransactionButtonTw } from 'thirdweb/react';
-import { transferHelperAbi } from '~/constants/abi/transferHelper';
-import { multicallAbi } from '~/constants/abi/multicall';
 import TokenPicker from '~/components/TokenPicker';
 import { maxDecimals } from '~/helpers/maxDecimals';
-import { getContract, prepareContractCall, prepareTransaction } from 'thirdweb';
 import { thirdwebClient } from '~/providers/OnchainProviders';
 
 type Props = {
