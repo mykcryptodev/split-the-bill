@@ -106,7 +106,7 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
   }
 
   const getPaySplitTx = async () => {
-    let addr = address ?? ZERO_ADDRESS;
+    const addr = address ?? ZERO_ADDRESS;
     if (paymentToken.address === USDC_ADDRESS) {
       console.log({ allowance });
       return prepareContractCall({

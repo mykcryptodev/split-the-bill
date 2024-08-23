@@ -26,7 +26,7 @@ export const TokenPicker: FC<Props> = ({ onTokenSelected, selectedToken, id, cla
         setTokenOptions(tokens);
       }
     }
-    getData(q)
+    void getData(q)
   }, []);
 
   const handleSelectToken = (token: Token) => {
