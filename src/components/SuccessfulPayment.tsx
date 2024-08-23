@@ -16,12 +16,12 @@ export const SuccessfulPayment: FC<Props> = ({ onPayAgain, hide, splitIsFullyPai
           </svg>
           <span>You paid your share!</span>
           <div className="flex items-center gap-2">
-            <button
+            {/* <button
               className="btn btn-xs btn-link mt-2"
               onClick={onPayAgain}
             >
               Your Receipt
-            </button>
+            </button> */}
             {!splitIsFullyPaid && (
               <button
                 className="btn btn-xs btn-link mt-2"
