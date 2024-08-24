@@ -1,10 +1,11 @@
-import { type FC } from "react";
 import { useSnackbar } from 'notistack';
+import { type FC } from "react";
 import { QRCode } from 'react-qrcode-logo';
-import { APP_NAME, USDC_COLOR, USDC_IMAGE } from "~/constants";
-import { Split } from "~/types/split";
 
-const QRCodeModal: FC<{ formattedAmount: string; split: Split; splitId: string; }> = ({ formattedAmount, split, splitId }) => {
+import { APP_NAME, USDC_COLOR, USDC_IMAGE } from "~/constants";
+import { type Split } from "~/types/split";
+
+const QRCodeModal: FC<{ formattedAmount: string; split: Split; splitId: string; }> = ({ formattedAmount }) => {
   return (
     <>
       <label htmlFor="qr-code-modal" className="btn btn-sm btn-ghost">

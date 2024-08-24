@@ -1,4 +1,5 @@
-import { Token } from "@coinbase/onchainkit/token";
+import { type Token } from "@coinbase/onchainkit/token";
+
 import { CHAIN, USDC_ADDRESS, USDC_DECIMALS } from "~/constants";
 
 export const ETH_TOKEN: Token = {

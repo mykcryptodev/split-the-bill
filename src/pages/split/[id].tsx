@@ -1,21 +1,20 @@
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
 import { type GetServerSideProps, type NextPage } from "next";
+import { useSnackbar } from 'notistack';
 import { useEffect, useMemo, useState } from "react";
 import { formatUnits, isAddressEqual } from "viem";
 import { useAccount, useReadContract } from 'wagmi';
 
 import Pay from "~/components/Pay";
-import PayAnyCrypto from "~/components/PayAnyCrypto";
-import { useSnackbar } from 'notistack';
 import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
+import SuccessfulPayment from "~/components/SuccessfulPayment";
 import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
 import { transformSplit } from "~/helpers/transformSplit";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
 import { type Payment } from "~/types/split";
-import SuccessfulPayment from "~/components/SuccessfulPayment";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.params?.id as string;
@@ -80,6 +79,7 @@ export const Split: NextPage<Props> = ({ id }) => {
     if (userHasPaid && showPayButton) {
       setShowPayButton(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userHasPaid]);
 
   const refetchAndPopNotification = () => {

@@ -1,10 +1,11 @@
-import { Token } from "@coinbase/onchainkit/token";
-import { useEffect, useState, type FC } from "react";
-import { type Split } from "~/types/split";
-import TokenPicker from "./TokenPicker";
-import { api } from "~/utils/api";
-import { CHAIN, USDC_ADDRESS, USDC_DECIMALS, USDC_IMAGE } from "~/constants";
+import { type Token } from "@coinbase/onchainkit/token";
+import { type FC,useEffect, useState } from "react";
+
 import { USDC_TOKEN } from "~/constants/defaultTokens";
+import { type Split } from "~/types/split";
+import { api } from "~/utils/api";
+
+import TokenPicker from "./TokenPicker";
 
 type Props = {
   id: string;
@@ -17,24 +18,20 @@ type Props = {
 
 export const PayAnyCrypto: FC<Props> = ({
   split,
-  id,
   formattedAmount,
-  name,
-  comment,
-  onPaymentSuccessful,
 }) => {
   const [token, setToken] = useState<Token>(USDC_TOKEN);
   const { data: tokenPrice } = api.simpleHash.getTokenPrice.useQuery({
     address: token?.address,
   });
-  const [priceInToken, setPriceInToken] = useState<string>('');
+  const [, setPriceInToken] = useState<string>('');
   useEffect(() => {
     if (tokenPrice) {
       setPriceInToken(
         (Number(formattedAmount.replace('$', '')) / tokenPrice).toString(),
       )
     }
-  }, [tokenPrice, token, split.amountPerPerson]);
+  }, [tokenPrice, token, split.amountPerPerson, formattedAmount]);
   
   return (
     <div className="flex items-center w-full rounded-xl">

@@ -1,8 +1,9 @@
 import { TokenChip } from "@coinbase/onchainkit/token";
 import { type FC } from "react";
-import { useReadContracts } from 'wagmi';
-import { CHAIN, USDC_IMAGE } from "~/constants";
 import { erc20Abi, formatUnits } from 'viem';
+import { useReadContracts } from 'wagmi';
+
+import { CHAIN, USDC_IMAGE } from "~/constants";
 import { maxDecimals } from "~/helpers/maxDecimals";
 
 type Props = {

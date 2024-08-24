@@ -1,12 +1,12 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import { FC } from "react";
+import { type FC } from "react";
 import { ZERO_ADDRESS } from "thirdweb";
-import { useReadContract, useReadContracts, useAccount } from "wagmi";
+import { useAccount,useReadContract, useReadContracts } from "wagmi";
+
 import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
 import { transformSplit } from "~/helpers/transformSplit";
-import { Split } from "~/types/split";
 
 export const MySplits: NextPage = () => {
   const { address } = useAccount();
@@ -31,7 +31,7 @@ export const MySplits: NextPage = () => {
   });
 
   const SplitRow: FC<{ splitId: bigint }> = ({ splitId }) => {
-    const { data, isLoading } = useReadContract({
+    const { data } = useReadContract({
       abi: splitItAbi,
       address: SPLIT_IT_CONTRACT_ADDRESS,
       functionName: "splits",

@@ -1,8 +1,8 @@
 import { Avatar, Name } from "@coinbase/onchainkit/identity";
 import { type FC } from "react";
 import { useEnsName } from "thirdweb/react";
-import { thirdwebClient } from "~/providers/OnchainProviders";
 
+import { thirdwebClient } from "~/providers/OnchainProviders";
 import { type Payment } from "~/types/split";
 
 type Props = {

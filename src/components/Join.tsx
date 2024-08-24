@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 export const Join: FC = () => {
   const router = useRouter();
