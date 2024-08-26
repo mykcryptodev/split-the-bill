@@ -1,9 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
 import { type FC, type ReactNode } from "react";
 
 import { Wallet } from "~/components/Wallet";
-import { useAccount } from "wagmi";
-import Image from "next/image";
-import Link from "next/link";
 import { APP_NAME } from "~/constants";
 
 type Props = {
@@ -11,7 +10,6 @@ type Props = {
 };
 
 export const Layout: FC<Props> = ({ children }) => {
-  const { address } = useAccount();
   return (
     <div>
       <div className="bg-[#fffcf9] h-full w-full fixed -z-10" />

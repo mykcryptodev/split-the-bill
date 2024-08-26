@@ -1,23 +1,24 @@
+import { type Token } from "@coinbase/onchainkit/token";
+import { useSnackbar } from "notistack";
 import { type FC,useEffect,useMemo, useState } from "react";
 import { getContract, prepareContractCall, prepareTransaction } from 'thirdweb';
 import { TransactionButton } from 'thirdweb/react';
+import { maxUint256 } from "thirdweb/utils";
+import { encodeFunctionData,erc20Abi, isAddressEqual, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
 import { Wallet } from '~/components/Wallet';
 import { AGGREGATOR_ADDRESS, CHAIN, MULTICALL, SPLIT_IT_CONTRACT_ADDRESS, THIRDWEB_CHAIN, TRANSFER_BALANCE_ADDRESS, USDC_ADDRESS, ZERO_ADDRESS } from '~/constants';
-import { erc20Abi, isAddressEqual, parseUnits, encodeFunctionData } from 'viem';
+import { multicallAbi } from "~/constants/abi/multicall";
+import { splitItAbi } from "~/constants/abi/splitIt";
+import { transferHelperAbi } from "~/constants/abi/transferHelper";
+import { USDC_TOKEN } from "~/constants/defaultTokens";
+import { maxDecimals } from "~/helpers/maxDecimals";
 import { thirdwebClient } from '~/providers/OnchainProviders';
 import { type Split } from "~/types/split";
-import { Token } from "@coinbase/onchainkit/token";
-import { USDC_TOKEN } from "~/constants/defaultTokens";
-import TokenPicker from "./TokenPicker";
 import { api } from "~/utils/api";
-import { maxDecimals } from "~/helpers/maxDecimals";
-import { splitItAbi } from "~/constants/abi/splitIt";
-import { multicallAbi } from "~/constants/abi/multicall";
-import { maxUint256 } from "thirdweb/utils";
-import { transferHelperAbi } from "~/constants/abi/transferHelper";
-import { useSnackbar } from "notistack";
+
+import TokenPicker from "./TokenPicker";
 
 type Props = {
   id: string;
@@ -46,7 +47,7 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount, name, comment, o
         ((Number(formattedAmount.replace('$', '')) / paymentTokenPrice) * SLIPPAGE).toString(),
       )
     }
-  }, [paymentTokenPrice, paymentToken, split.amountPerPerson]);
+  }, [paymentTokenPrice, paymentToken, split.amountPerPerson, formattedAmount]);
 
   const allowanceAddress = useMemo(() => {
     if (isAddressEqual(paymentToken.address, USDC_ADDRESS)) {

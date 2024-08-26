@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
-import { Join } from "~/components/Join";
 
+import { Join } from "~/components/Join";
 import { APP_NAME } from "~/constants";
 
 export default function Home() {

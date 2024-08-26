@@ -1,9 +1,9 @@
 import { type AppType } from "next/app";
+import { SnackbarProvider } from 'notistack';
 
 import Layout from "~/components/Layout";
 import OnchainProviders from "~/providers/OnchainProviders";
 import { api } from "~/utils/api";
-import { SnackbarProvider } from 'notistack';
 
 import '@coinbase/onchainkit/styles.css';
 import "~/styles/globals.css";

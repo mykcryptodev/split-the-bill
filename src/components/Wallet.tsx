@@ -19,11 +19,12 @@ import { defineChain } from 'thirdweb';
 import { viemAdapter } from "thirdweb/adapters/viem";
 import { useSetActiveWallet } from 'thirdweb/react';
 import { createWalletAdapter } from 'thirdweb/wallets';
-import { useDisconnect, useSwitchChain, useWalletClient, useAccount } from "wagmi";
+import { useAccount,useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
 
-import { thirdwebClient } from '~/providers/OnchainProviders';
-import Balance from './Balance';
 import { USDC_ADDRESS } from '~/constants';
+import { thirdwebClient } from '~/providers/OnchainProviders';
+
+import Balance from './Balance';
 
 export function Wallet() {
   const { address } = useAccount();

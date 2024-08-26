@@ -1,17 +1,17 @@
+import { readContract } from '@wagmi/core';
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import { useEnsName } from "thirdweb/react";
+import { useAccount } from "wagmi";
 
 import CreateSplit from "~/components/Create";
 import CreateSplitEoaTw from "~/components/CreateEoaTw";
 import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
+import { splitItAbi } from "~/constants/abi/splitIt";
 import { maxDecimals } from "~/helpers/maxDecimals";
 import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
-import { readContract } from '@wagmi/core';
-import { useAccount } from "wagmi";
-import { useEnsName } from "thirdweb/react";
 import { thirdwebClient, wagmiConfig } from "~/providers/OnchainProviders";
-import { splitItAbi } from "~/constants/abi/splitIt";
 
 export const Create: NextPage = () => {
   const router = useRouter();

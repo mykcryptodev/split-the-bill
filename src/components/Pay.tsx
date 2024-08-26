@@ -1,3 +1,4 @@
+import { type Token } from '@coinbase/onchainkit/token';
 import {
   Transaction,
   TransactionButton,
@@ -6,22 +7,21 @@ import {
   TransactionStatusAction,
   TransactionStatusLabel,
 } from '@coinbase/onchainkit/transaction';
-import { useEffect, useState, type FC } from "react";
+import { useSnackbar } from 'notistack';
+import { type FC,useEffect, useState } from "react";
+import { encodeFunctionData,erc20Abi, isAddressEqual, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { useSendCalls } from 'wagmi/experimental'
 
+import TokenPicker from '~/components/TokenPicker';
 import { Wallet } from '~/components/Wallet';
 import { AGGREGATOR_ADDRESS, CHAIN, SPLIT_IT_CONTRACT_ADDRESS, USDC_ADDRESS } from '~/constants';
-import { erc20Abi, isAddressEqual, parseUnits, encodeFunctionData } from 'viem';
 import { splitItAbi } from '~/constants/abi/splitIt';
-import { type Split } from "~/types/split";
-import { Token } from '@coinbase/onchainkit/token';
 import { USDC_TOKEN } from '~/constants/defaultTokens';
-import { api } from '~/utils/api';
-import { useSnackbar } from 'notistack';
-import TokenPicker from '~/components/TokenPicker';
 import { maxDecimals } from '~/helpers/maxDecimals';
 import { thirdwebClient } from '~/providers/OnchainProviders';
+import { type Split } from "~/types/split";
+import { api } from '~/utils/api';
 
 type Props = {
   id: string;
@@ -51,7 +51,7 @@ export const Pay: FC<Props> = ({ split, id, formattedAmount, name, comment, onPa
         ((Number(formattedAmount.replace('$', '')) / paymentTokenPrice) * SLIPPAGE).toString(),
       )
     }
-  }, [paymentTokenPrice, paymentToken, split.amountPerPerson]);
+  }, [paymentTokenPrice, paymentToken, split.amountPerPerson, formattedAmount]);
 
   const [isPaymentLoading, setIsPaymentLoading] = useState<boolean>(false);
 

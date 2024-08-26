@@ -1,10 +1,10 @@
+import { isAddressEqual } from "viem";
 import { z } from "zod";
+
 import { USDC_ADDRESS } from "~/constants";
 import { env } from "~/env";
-
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { TokenPriceResponse } from "~/types/simpleHash";
-import { isAddressEqual } from "viem";
+import { type TokenPriceResponse } from "~/types/simpleHash";
 
 export const simpleHashRouter = createTRPCRouter({
   getTokenPrice: publicProcedure

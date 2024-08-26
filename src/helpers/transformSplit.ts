@@ -1,5 +1,5 @@
 import { SPLIT_IT_CONTRACT_ADDRESS } from "~/constants";
-import { Split } from "~/types/split";
+import { type Split } from "~/types/split";
 
 type Data = readonly [string, string, string, bigint, bigint, bigint, bigint] | undefined;
 

@@ -1,5 +1,6 @@
 import { base as twBase, baseSepolia as twBaseSepolia } from "thirdweb/chains";
 import { base, baseSepolia } from "wagmi/chains";
+
 import { env } from "~/env";
 
 const isBaseMainnet = ({ chainId }: { chainId: number }) => chainId === base.id;
