@@ -3,15 +3,16 @@ import { type FC } from "react";
 import { erc20Abi, formatUnits } from 'viem';
 import { useReadContracts } from 'wagmi';
 
-import { CHAIN, USDC_IMAGE } from "~/constants";
+import { USDC_IMAGE } from "~/constants";
 import { maxDecimals } from "~/helpers/maxDecimals";
 
 type Props = {
   token: string;
   address: string;
+  chainId: number;
   className?: string;
 };
-export const Balance: FC<Props> = ({ address, token, className }) => {
+export const Balance: FC<Props> = ({ address, token, className, chainId }) => {
   const { 
     data: [decimals, balance] = [6, BigInt(0)],
   } = useReadContracts({ 
@@ -32,7 +33,7 @@ export const Balance: FC<Props> = ({ address, token, className }) => {
   });
   const tokenData = {
     address: token,
-    chainId: CHAIN.id,
+    chainId,
     decimals,
     image: USDC_IMAGE, // usdc only for now
     name: `${maxDecimals(formatUnits(balance, decimals), 2)}`,

@@ -2,6 +2,7 @@ import { Avatar, Name } from "@coinbase/onchainkit/identity";
 import { type FC } from "react";
 import { useEnsName } from "thirdweb/react";
 
+import { classNames } from "~/helpers/classNames";
 import { thirdwebClient } from "~/providers/OnchainProviders";
 import { type Payment } from "~/types/split";
 
@@ -107,7 +108,3 @@ export const Payments: FC<Props> = ({ payments }) => {
 };
 
 export default Payments;
-
-function classNames(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ')
-}
