@@ -6,6 +6,7 @@ import { formatUnits, isAddressEqual } from "viem";
 import { useAccount, useReadContract } from 'wagmi';
 
 import Pay from "~/components/Pay";
+import PayCrossChain from "~/components/PayCrossChain";
 import { PayEoa } from "~/components/PayEoaTw";
 import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
@@ -172,11 +173,27 @@ export const Split: NextPage<Props> = ({ id }) => {
               </span>
             </div>
           </label>
-          {isSmartWallet ? (
-            <Pay 
+          <PayCrossChain 
               split={split} 
-              id={id} 
-              formattedAmount={formattedAmount}
+              id={id}  
+              formattedAmount={formattedAmount} 
+              name={name}
+              comment={comment}
+              onPaymentSuccessful={() => void refetchAndPopNotification()}
+            />
+          {isSmartWallet ? (
+            // <Pay 
+            //   split={split} 
+            //   id={id} 
+            //   formattedAmount={formattedAmount}
+            //   name={name}
+            //   comment={comment}
+            //   onPaymentSuccessful={() => void refetchAndPopNotification()}
+            // />
+            <PayCrossChain 
+              split={split} 
+              id={id}  
+              formattedAmount={formattedAmount} 
               name={name}
               comment={comment}
               onPaymentSuccessful={() => void refetchAndPopNotification()}

@@ -24,6 +24,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RPC_URL: z.string(),
     NEXT_PUBLIC_CHAIN_ID: z.string(),
     NEXT_PUBLIC_ONCHAINKIT_API_KEY: z.string(),
+    NEXT_PUBLIC_GLIDE_PROJECT_ID: z.string(),
   },
 
   /**
@@ -40,6 +41,7 @@ export const env = createEnv({
     NEXT_PUBLIC_ONCHAINKIT_API_KEY: process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY,
     SIMPLEHASH_API_KEY: process.env.SIMPLEHASH_API_KEY,
     KYBERSWAP_CLIENT_ID: process.env.KYBERSWAP_CLIENT_ID,
+    NEXT_PUBLIC_GLIDE_PROJECT_ID: process.env.NEXT_PUBLIC_GLIDE_PROJECT_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -1,4 +1,5 @@
 import { OnchainKitProvider } from '@coinbase/onchainkit';
+import { chains,createGlideConfig } from "@paywithglide/glide-js";
 import {
   connectorsForWallets,
   RainbowKitProvider,
@@ -15,6 +16,7 @@ import { ThirdwebProvider } from 'thirdweb/react';
 import { createPublicClient, http as viemHttp } from "viem";
 import { type PublicClient } from "viem";
 import { createConfig, http,WagmiProvider } from 'wagmi';
+import { optimism } from 'wagmi/chains';
 
 import { APP_NAME, CHAIN, CHAIN_RPC } from '~/constants';
 import { env } from '~/env';
@@ -43,12 +45,13 @@ const connectors = connectorsForWallets(
  
 export const wagmiConfig = createConfig({
   connectors,
-  chains: [CHAIN],
+  chains: [CHAIN, optimism],
   syncConnectedChain: true,
   transports: {
-    [CHAIN.id]: http(CHAIN_RPC),
+    // [CHAIN.id]: http(CHAIN_RPC),
     8453: http(CHAIN_RPC),
     84532: http(CHAIN_RPC),
+    10: http(),
   },
 });
 
@@ -59,6 +62,11 @@ export const publicClient = createPublicClient({
 
 export const thirdwebClient = createThirdwebClient({
   clientId: env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+});
+
+export const glideConfig = createGlideConfig({
+  projectId: env.NEXT_PUBLIC_GLIDE_PROJECT_ID,
+  chains: [chains.base, chains.optimism],
 });
 
 type Props = {
