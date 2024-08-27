@@ -11,6 +11,7 @@ export const env = createEnv({
     SIMPLEHASH_API_KEY: z.string(),
     KYBERSWAP_CLIENT_ID: z.string(),
     THIRDWEB_SECRET_KEY: z.string(),
+    GHOST_API_KEY: z.string(),
   },
 
   /**
@@ -46,6 +47,7 @@ export const env = createEnv({
     KYBERSWAP_CLIENT_ID: process.env.KYBERSWAP_CLIENT_ID,
     NEXT_PUBLIC_GLIDE_PROJECT_ID: process.env.NEXT_PUBLIC_GLIDE_PROJECT_ID,
     THIRDWEB_SECRET_KEY: process.env.THIRDWEB_SECRET_KEY,
+    GHOST_API_KEY: process.env.GHOST_API_KEY,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
