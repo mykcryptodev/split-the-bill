@@ -1,6 +1,6 @@
 {
-  "name": "Split the Bill",
-  "short_name": "SplitBill",
+  "name": "Bill Split",
+  "short_name": "Bill Split",
   "description": "Split the bill with your friends",
   "start_url": "/",
   "display": "standalone",
