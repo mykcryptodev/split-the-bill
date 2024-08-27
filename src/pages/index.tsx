@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 
+import Feed from "~/components/Feed";
 import { Join } from "~/components/Join";
 import { APP_NAME } from "~/constants";
 
@@ -29,6 +30,7 @@ export default function Home() {
             </Link>
             <Join />
           </div>
+          <Feed />
         </div>
       </main>
     </>
