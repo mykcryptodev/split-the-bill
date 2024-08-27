@@ -1,12 +1,13 @@
 import { chains,createSession, currencies, executeSession, listPaymentOptions, type PaymentOption } from "@paywithglide/glide-js";
 import Image from "next/image";
 import { useSnackbar } from "notistack";
-import { type FC,useEffect,useState } from "react";
+import { type FC,useEffect,useMemo,useState } from "react";
 import { useAccount, useChainId, useSendTransaction, useSignTypedData,useSwitchChain } from "wagmi";
 
 import { GLIDE_RELAYER, SPLIT_IT_CONTRACT_ADDRESS, type SUPPORTED_CHAINS } from "~/constants";
 import { splitItAbi } from "~/constants/abi/splitIt";
 import { maxDecimals } from "~/helpers/maxDecimals";
+import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
 import { glideConfig } from "~/providers/OnchainProviders";
 
 type Props = {
@@ -30,6 +31,7 @@ export const PayCrossChain: FC<Props> = ({
   const { switchChainAsync } = useSwitchChain(); 
   const { sendTransactionAsync } = useSendTransaction(); 
   const { signTypedDataAsync } = useSignTypedData(); 
+  const isSmartWallet = useIsSmartWallet();
 
   const [paymentOptions, setPaymentOptions] = useState<PaymentOption[]>([]);
   const [paymentOptionsIsLoading, setPaymentOptionsIsLoading] = useState<boolean>(false);
@@ -37,27 +39,30 @@ export const PayCrossChain: FC<Props> = ({
   const [paymentIsLoading, setPaymentIsLoading] = useState<boolean>(false);
 
 
+  const payTx = useMemo(() => ({
+    chainId: chains.base.id,
+    account: address as `0x${string}`,
+   
+    abi: splitItAbi,
+    address: SPLIT_IT_CONTRACT_ADDRESS,
+    functionName: "pay",
+    args: [
+      BigInt(id),
+      address,
+      GLIDE_RELAYER,
+      name,
+      comment,
+    ],
+  }), [address, comment, id, name]);
+
   const payCrossChain = async () => {
     if (!address) return;
     try {
       setPaymentIsLoading(true);
       const session = await createSession(glideConfig, {
-        chainId: chains.base.id,
-        account: address as `0x${string}`,
-       
+        ...payTx,
         paymentCurrency: selectedPaymentOption ? selectedPaymentOption.paymentCurrency : currencies.usdc.on(chains.base),
-        preferGaslessPayment: false,
-       
-        abi: splitItAbi,
-        address: SPLIT_IT_CONTRACT_ADDRESS,
-        functionName: "pay",
-        args: [
-          BigInt(id),
-          address,
-          GLIDE_RELAYER,
-          name,
-          comment,
-        ],
+        preferGaslessPayment: !isSmartWallet, // awaiting glide to support smart wallet gasless
       });
       await executeSession(glideConfig, {
         session,
@@ -81,21 +86,7 @@ export const PayCrossChain: FC<Props> = ({
     const getPaymentOptions = async () => {
       try {
         setPaymentOptionsIsLoading(true);
-        const paymentOptions = await listPaymentOptions(glideConfig, {
-          chainId: chains.base.id,
-          account: address as `0x${string}`,
-         
-          abi: splitItAbi,
-          address: SPLIT_IT_CONTRACT_ADDRESS,
-          functionName: "pay",
-          args: [
-            BigInt(id),
-            address,
-            GLIDE_RELAYER,
-            name,
-            comment,
-          ],
-        });
+        const paymentOptions = await listPaymentOptions(glideConfig, payTx);
         console.log({ paymentOptions});
         setPaymentOptions(paymentOptions);
       } catch (e) {
@@ -105,7 +96,7 @@ export const PayCrossChain: FC<Props> = ({
       }
     }
     void getPaymentOptions();
-  }, [address, comment, enqueueSnackbar, id, name]);
+  }, [address, comment, enqueueSnackbar, id, name, payTx]);
 
   return (
     <div className="flex items-center w-full bg-primary rounded-r-xl rounded-l-lg">

@@ -5,13 +5,11 @@ import { useEffect, useMemo, useState } from "react";
 import { formatUnits, isAddressEqual } from "viem";
 import { useAccount } from 'wagmi';
 
-import Pay from "~/components/Pay";
 import PayCrossChain from "~/components/PayCrossChain";
 import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
 import SuccessfulPayment from "~/components/SuccessfulPayment";
 import { CHAIN, USDC_DECIMALS } from "~/constants";
-import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
 import { type Payment } from "~/types/split";
 import { api } from "~/utils/api";
 
@@ -48,7 +46,6 @@ export const Split: NextPage<Props> = ({ id }) => {
   }, [payments, split]);
 
   const { address } = useAccount();
-  const isSmartWallet = useIsSmartWallet();
 
   const formattedAmount = Number(
     formatUnits(split?.amountPerPerson ?? BigInt(0), USDC_DECIMALS)
@@ -169,24 +166,13 @@ export const Split: NextPage<Props> = ({ id }) => {
               </span>
             </div>
           </label>
-          {isSmartWallet ? (
-            <Pay 
-              split={split} 
-              id={id} 
-              formattedAmount={formattedAmount}
-              name={name}
-              comment={comment}
-              onPaymentSuccessful={() => void refetchAndPopNotification()}
-            />
-          ) : (
-            <PayCrossChain 
-              id={id}  
-              formattedAmount={formattedAmount} 
-              name={name}
-              comment={comment}
-              onPaymentSuccessful={() => void refetchAndPopNotification()}
-            />
-          )}
+          <PayCrossChain 
+            id={id}  
+            formattedAmount={formattedAmount} 
+            name={name}
+            comment={comment}
+            onPaymentSuccessful={() => void refetchAndPopNotification()}
+          />
         </div>
       )}
       <div className="my-2" />
