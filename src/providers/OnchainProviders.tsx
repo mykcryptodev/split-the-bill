@@ -1,4 +1,5 @@
 import { OnchainKitProvider } from '@coinbase/onchainkit';
+import { createGlideConfig } from "@paywithglide/glide-js";
 import {
   connectorsForWallets,
   RainbowKitProvider,
@@ -7,6 +8,7 @@ import {
   coinbaseWallet,
   metaMaskWallet,
   rainbowWallet,
+  walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -16,8 +18,9 @@ import { createPublicClient, http as viemHttp } from "viem";
 import { type PublicClient } from "viem";
 import { createConfig, http,WagmiProvider } from 'wagmi';
 
-import { APP_NAME, CHAIN, CHAIN_RPC } from '~/constants';
+import { APP_NAME, CHAIN, CHAIN_RPC, SUPPORTED_CHAINS } from '~/constants';
 import { env } from '~/env';
+import { getThirdwebChain } from '~/helpers/getThirdwebChain';
 
 import '@coinbase/onchainkit/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -32,7 +35,11 @@ const connectors = connectorsForWallets(
     },
     {
       groupName: 'Other Wallets',
-      wallets: [rainbowWallet, metaMaskWallet],
+      wallets: [
+        rainbowWallet, 
+        metaMaskWallet, 
+        walletConnectWallet,
+      ],
     },
   ],
   {
@@ -43,12 +50,16 @@ const connectors = connectorsForWallets(
  
 export const wagmiConfig = createConfig({
   connectors,
-  chains: [CHAIN],
+  chains: SUPPORTED_CHAINS,
   syncConnectedChain: true,
   transports: {
-    [CHAIN.id]: http(CHAIN_RPC),
-    8453: http(CHAIN_RPC),
-    84532: http(CHAIN_RPC),
+    1: http(getThirdwebChain(1).rpc),       // Ethereum Mainnet
+    10: http(getThirdwebChain(10).rpc),      // Optimism
+    137: http(getThirdwebChain(137).rpc),     // Polygon
+    42161: http(getThirdwebChain(42161).rpc),   // Arbitrum
+    43114: http(getThirdwebChain(43114).rpc),   // Avalanche
+    8453: http(CHAIN_RPC),    // Base
+    84532: http(CHAIN_RPC),   // Base Sepolia
   },
 });
 
@@ -59,6 +70,11 @@ export const publicClient = createPublicClient({
 
 export const thirdwebClient = createThirdwebClient({
   clientId: env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+});
+
+export const glideConfig = createGlideConfig({
+  projectId: env.NEXT_PUBLIC_GLIDE_PROJECT_ID,
+  chains: SUPPORTED_CHAINS,
 });
 
 type Props = {

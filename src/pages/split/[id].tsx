@@ -3,18 +3,15 @@ import { type GetServerSideProps, type NextPage } from "next";
 import { useSnackbar } from 'notistack';
 import { useEffect, useMemo, useState } from "react";
 import { formatUnits, isAddressEqual } from "viem";
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount } from 'wagmi';
 
-import Pay from "~/components/Pay";
-import { PayEoa } from "~/components/PayEoaTw";
+import PayCrossChain from "~/components/PayCrossChain";
 import Payments from "~/components/Payments";
 import { Share } from "~/components/Share";
 import SuccessfulPayment from "~/components/SuccessfulPayment";
-import { SPLIT_IT_CONTRACT_ADDRESS, USDC_DECIMALS } from "~/constants";
-import { splitItAbi } from "~/constants/abi/splitIt";
-import { transformSplit } from "~/helpers/transformSplit";
-import { useIsSmartWallet } from "~/hooks/useIsSmartWallet";
+import { CHAIN, USDC_DECIMALS } from "~/constants";
 import { type Payment } from "~/types/split";
+import { api } from "~/utils/api";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.params?.id as string;
@@ -31,23 +28,17 @@ type Props = {
 
 export const Split: NextPage<Props> = ({ id }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { data, refetch: refetchSplit } = useReadContract({
-    abi: splitItAbi,
-    address: SPLIT_IT_CONTRACT_ADDRESS,
-    functionName: "splits",
-    args: [BigInt(id)],
+  const { data: split, refetch: refetchSplit } = api.split.getById.useQuery({
+    chainId: CHAIN.id,
+    id,
   });
-  const split = transformSplit(data);
-
-  const { data: payments, refetch: refetchPayments } = useReadContract({
-    abi: splitItAbi,
-    address: SPLIT_IT_CONTRACT_ADDRESS,
-    functionName: "getPayments",
-    args: [BigInt(id)],
+  const { data: payments, refetch: refetchPayments } = api.split.getPayments.useQuery({
+    chainId: CHAIN.id,
+    id,
   });
 
   const splitIsFullyPaid = useMemo(() => {
-    if (!payments) return false;
+    if (!payments || !split) return false;
     // count the number of payments, multiply it by the amount per person
     // if that number is equal to the total amount, then the split is paid
     const totalPaid = BigInt(payments.length) * split.amountPerPerson;
@@ -55,9 +46,10 @@ export const Split: NextPage<Props> = ({ id }) => {
   }, [payments, split]);
 
   const { address } = useAccount();
-  const isSmartWallet = useIsSmartWallet();
 
-  const formattedAmount = Number(formatUnits(split.amountPerPerson, USDC_DECIMALS)).toLocaleString([], {
+  const formattedAmount = Number(
+    formatUnits(split?.amountPerPerson ?? BigInt(0), USDC_DECIMALS)
+  ).toLocaleString([], {
     style: 'currency',
     currency: 'USD',
   });
@@ -94,6 +86,8 @@ export const Split: NextPage<Props> = ({ id }) => {
       void refetchPayments();
     }, 5000);
   }
+
+  if (!split) return null;
   
   return (
     <div className="flex flex-col gap-1 mt-4">
@@ -172,33 +166,13 @@ export const Split: NextPage<Props> = ({ id }) => {
               </span>
             </div>
           </label>
-          {isSmartWallet ? (
-            <Pay 
-              split={split} 
-              id={id} 
-              formattedAmount={formattedAmount}
-              name={name}
-              comment={comment}
-              onPaymentSuccessful={() => void refetchAndPopNotification()}
-            />
-          ) : (
-            <PayEoa 
-              split={split} 
-              id={id}  
-              formattedAmount={formattedAmount} 
-              name={name}
-              comment={comment}
-              onPaymentSuccessful={() => void refetchAndPopNotification()}
-            />
-          )}
-          {/* <PayAnyCrypto 
-            split={split} 
+          <PayCrossChain 
             id={id}  
             formattedAmount={formattedAmount} 
             name={name}
             comment={comment}
-            onPaymentSuccessful={() => void refetch()}
-          /> */}
+            onPaymentSuccessful={() => void refetchAndPopNotification()}
+          />
         </div>
       )}
       <div className="my-2" />
