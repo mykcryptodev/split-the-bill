@@ -7,7 +7,6 @@ import { useAccount } from 'wagmi';
 
 import PayCrossChain from "~/components/PayCrossChain";
 import Payments from "~/components/Payments";
-import FundWithCc from "~/components/FundWithCc";
 import { Share } from "~/components/Share";
 import SuccessfulPayment from "~/components/SuccessfulPayment";
 import { CHAIN, USDC_DECIMALS } from "~/constants";
@@ -174,14 +173,6 @@ export const Split: NextPage<Props> = ({ id }) => {
             comment={comment}
             onPaymentSuccessful={() => void refetchAndPopNotification()}
           />
-          {/* <FundWithCc
-            id={id}  
-            formattedAmount={formattedAmount} 
-            name={name}
-            comment={comment}
-            split={split}
-            onPaymentSuccessful={() => void refetchAndPopNotification()}
-          /> */}
         </div>
       )}
       <div className="my-2" />
