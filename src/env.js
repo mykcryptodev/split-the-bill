@@ -12,6 +12,7 @@ export const env = createEnv({
     KYBERSWAP_CLIENT_ID: z.string(),
     THIRDWEB_SECRET_KEY: z.string(),
     GHOST_API_KEY: z.string(),
+    STRIPE_SECRET_KEY: z.string(),
   },
 
   /**
@@ -29,6 +30,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GLIDE_PROJECT_ID: z.string(),
     NEXT_PUBLIC_POSTHOG_KEY: z.string(),
     NEXT_PUBLIC_POSTHOG_HOST: z.string(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
   },
 
   /**
@@ -48,8 +50,10 @@ export const env = createEnv({
     NEXT_PUBLIC_GLIDE_PROJECT_ID: process.env.NEXT_PUBLIC_GLIDE_PROJECT_ID,
     THIRDWEB_SECRET_KEY: process.env.THIRDWEB_SECRET_KEY,
     GHOST_API_KEY: process.env.GHOST_API_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

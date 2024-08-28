@@ -1,6 +1,7 @@
 import { kyberswapRouter } from "~/server/api/routers/kyberswap";
 import { simpleHashRouter } from "~/server/api/routers/simpleHash";
 import { splitRouter } from "~/server/api/routers/split";
+import { stripeRouter } from "~/server/api/routers/stripe";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   kyberswap: kyberswapRouter,
   simpleHash: simpleHashRouter,
   split: splitRouter,
+  stripe: stripeRouter,
 });
 
 // export type definition of API

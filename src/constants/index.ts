@@ -48,6 +48,7 @@ export const USDC: ContractAddress = {
 }
 
 export const GLIDE_RELAYER: `0x${string}` = "0x078bf499222bfcbbfb50ebb191270a9bac93ce44";
+export const GLIDE_SPONSOR_WALLET_ADDRESS: `0x${string}` = "0x50C248677Bbd880d7249CF85B46090f3A03B26e5";
 
 export const USDC_ADDRESS: `0x${string}` = isBaseMainnet({ chainId: CHAIN.id }) ? "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" : "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 export const USDC_DECIMALS = 6;
