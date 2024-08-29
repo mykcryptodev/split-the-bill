@@ -55,7 +55,11 @@ const PayWithFiat: FC<Props> = ({ clientSecret }) => {
   return (
     <form onSubmit={handleSubmit}>
       <PaymentElement options={paymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
+      <button 
+        disabled={isLoading || !stripe || !elements} 
+        id="submit"
+        className="btn btn-primary btn-block mt-4"
+      >
         <span id="button-text">
           {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
         </span>
