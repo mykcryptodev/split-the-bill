@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi';
 
 import PayCrossChain from "~/components/PayCrossChain";
 import Payments from "~/components/Payments";
+import PayPalCheckout from "~/components/PayPal";
 import { Share } from "~/components/Share";
 import SuccessfulPayment from "~/components/SuccessfulPayment";
 import { CHAIN, USDC_DECIMALS } from "~/constants";
@@ -175,6 +176,9 @@ export const Split: NextPage<Props> = ({ id }) => {
           />
         </div>
       )}
+      <PayPalCheckout
+        amount={formatUnits(split.amountPerPerson, USDC_DECIMALS)}
+      />
       <div className="my-2" />
       <Payments payments={payments as Payment[] | undefined} />
     </div>
