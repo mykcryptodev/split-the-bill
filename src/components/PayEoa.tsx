@@ -40,7 +40,6 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount }) => {
   if (!hasSufficientAllowance && address) {
     return (
       <Transaction
-        address={address}
         chainId={CHAIN.id}
         capabilities={undefined}
         contracts={[
@@ -64,7 +63,6 @@ export const PayEoa: FC<Props> = ({ split, id, formattedAmount }) => {
 
   return address ? (
     <Transaction
-      address={address}
       chainId={CHAIN.id}
       contracts={[
         {

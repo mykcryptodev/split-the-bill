@@ -1,4 +1,5 @@
-import { getTokens, type Token,TokenChip, TokenRow, TokenSearch } from "@coinbase/onchainkit/token";
+import { getTokens } from '@coinbase/onchainkit/api'; 
+import { type Token,TokenChip, TokenRow, TokenSearch } from "@coinbase/onchainkit/token";
 import { type FC,useCallback, useState } from "react";
 import { ZERO_ADDRESS } from "thirdweb";
 import { erc20Abi, formatUnits } from "viem";

@@ -160,7 +160,6 @@ export const Pay: FC<Props> = ({ split, id, formattedAmount, name, comment, onPa
   return address && isAddressEqual(paymentToken.address, USDC_ADDRESS) ? (
     <div className="flex items-center w-full rounded-lg gap-2">
       <Transaction
-        address={address}
         chainId={CHAIN.id}
         contracts={[
           {

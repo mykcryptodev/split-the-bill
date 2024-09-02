@@ -50,7 +50,6 @@ const CreateSplit: FC<Props> = ({
  
   return address ? (
     <Transaction
-      address={SPLIT_IT_CONTRACT_ADDRESS}
       chainId={CHAIN.id}
       contracts={contracts}
       onSuccess={() => onSplitCreated()}
